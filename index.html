@@ -50,12 +50,15 @@
   .card-value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
   .card-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
   .checklist-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 16px; }
-  .section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; }
+  .section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .section-hint { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; }
   .task-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
   .task-row:last-of-type { border-bottom: none; }
   .task-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; flex-shrink: 0; cursor: pointer; }
-  .task-label { font-size: 14px; color: var(--color-text-primary); flex: 1; }
+  .task-label { font-size: 14px; color: var(--color-text-primary); flex: 1; cursor: text; border-radius: 3px; padding: 1px 3px; margin: -1px -3px; }
+  .task-label:hover { background: var(--color-background-secondary); }
   .task-label.done { color: var(--color-text-tertiary); text-decoration: line-through; }
+  .task-name-input { font-size: 14px; flex: 1; padding: 2px 6px; border: 0.5px solid #1D9E75; border-radius: 4px; background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; }
   .task-link { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: #185FA5; text-decoration: none; background: var(--color-background-info); border-radius: 4px; padding: 2px 7px; flex-shrink: 0; white-space: nowrap; }
   .task-link:hover { text-decoration: underline; }
   .task-link svg { width: 10px; height: 10px; flex-shrink: 0; }
@@ -87,7 +90,6 @@
     <h1>My dashboard</h1>
     <span class="date" id="date-label"></span>
   </div>
-
   <div class="grid">
     <div class="card">
       <div class="card-label">Tasks completed today</div>
@@ -100,9 +102,9 @@
       <div class="card-sub">days all tasks completed</div>
     </div>
   </div>
-
   <div class="checklist-card">
     <div class="section-title">Daily checklist</div>
+    <div class="section-hint">Double-click a task name to edit it · pencil icon to edit its link</div>
     <div id="task-list"></div>
     <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
     <div class="progress-label" id="prog-label">0%</div>
@@ -114,7 +116,7 @@
         <input type="text" id="new-url" placeholder="Link URL (optional)..." onkeydown="if(event.key==='Enter')addTask()" />
         <button onclick="addTask()">Add</button>
       </div>
-      <div class="url-hint">Press Enter in task name to jump to URL field, then Enter again to save</div>
+      <div class="url-hint">Enter in task name jumps to URL field · Enter again to save</div>
     </div>
   </div>
   <div class="reset-note" id="reset-note"></div>
@@ -147,6 +149,24 @@ function initState() {
   }
 }
 
+function startEditName(i, lbl) {
+  const inp = document.createElement('input');
+  inp.className = 'task-name-input';
+  inp.value = state.tasks[i].text;
+  lbl.replaceWith(inp);
+  inp.focus(); inp.select();
+  function commit() {
+    const val = inp.value.trim();
+    if (val) state.tasks[i].text = val;
+    save(SK, state); render();
+  }
+  inp.onblur = commit;
+  inp.onkeydown = (e) => {
+    if (e.key === 'Enter') { inp.onblur = null; commit(); }
+    if (e.key === 'Escape') { inp.onblur = null; render(); }
+  };
+}
+
 function render() {
   const list = document.getElementById('task-list');
   list.innerHTML = '';
@@ -159,6 +179,8 @@ function render() {
     const lbl = document.createElement('span');
     lbl.className = 'task-label' + (task.done ? ' done' : '');
     lbl.textContent = task.text;
+    lbl.title = 'Double-click to edit';
+    lbl.ondblclick = () => startEditName(i, lbl);
     row.appendChild(cb); row.appendChild(lbl);
     if (task.url) {
       const a = document.createElement('a');
