@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Personal Dashboard</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f5f3;
+    --color-background-tertiary: #eeede9;
+    --color-background-info: #E6F1FB;
+    --color-text-primary: #1a1a18;
+    --color-text-secondary: #6b6b67;
+    --color-text-tertiary: #a0a09c;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.22);
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #1e1e1c;
+      --color-background-secondary: #262624;
+      --color-background-tertiary: #2e2e2b;
+      --color-background-info: rgba(12,68,124,0.15);
+      --color-text-primary: #f0efe9;
+      --color-text-secondary: #9b9b95;
+      --color-text-tertiary: #616160;
+      --color-border-tertiary: rgba(255,255,255,0.1);
+      --color-border-secondary: rgba(255,255,255,0.18);
+    }
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-background-tertiary);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .dash { max-width: 680px; margin: 0 auto; }
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .date { font-size: 13px; color: var(--color-text-secondary); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .card-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
+  .card-value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
+  .card-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+  .checklist-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 16px; }
+  .section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; }
+  .task-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
+  .task-row:last-of-type { border-bottom: none; }
+  .task-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; flex-shrink: 0; cursor: pointer; }
+  .task-label { font-size: 14px; color: var(--color-text-primary); flex: 1; }
+  .task-label.done { color: var(--color-text-tertiary); text-decoration: line-through; }
+  .task-link { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: #185FA5; text-decoration: none; background: var(--color-background-info); border-radius: 4px; padding: 2px 7px; flex-shrink: 0; white-space: nowrap; }
+  .task-link:hover { text-decoration: underline; }
+  .task-link svg { width: 10px; height: 10px; flex-shrink: 0; }
+  .task-link.done-link { opacity: 0.45; }
+  .edit-btn, .delete-btn { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 14px; padding: 0 2px; line-height: 1; opacity: 0.45; flex-shrink: 0; }
+  .edit-btn:hover, .delete-btn:hover { opacity: 1; }
+  .delete-btn:hover { color: #E24B4A; }
+  .inline-edit { display: flex; gap: 6px; align-items: center; width: 100%; margin-top: 4px; padding-bottom: 6px; }
+  .inline-edit input { flex: 1; font-size: 13px; padding: 5px 8px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; }
+  .inline-edit input:focus { border-color: #1D9E75; }
+  .inline-edit button { font-size: 12px; padding: 5px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-primary); cursor: pointer; }
+  .inline-edit button:hover { background: var(--color-background-secondary); }
+  .add-section { margin-top: 12px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .add-row, .url-row { display: flex; gap: 6px; }
+  .add-row input, .url-row input { flex: 1; font-size: 13px; padding: 6px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; }
+  .add-row input:focus, .url-row input:focus { border-color: #1D9E75; }
+  .add-row button, .url-row button { font-size: 13px; padding: 6px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-primary); cursor: pointer; white-space: nowrap; }
+  .add-row button:hover, .url-row button:hover { background: var(--color-background-secondary); }
+  .url-hint { font-size: 11px; color: var(--color-text-tertiary); }
+  .progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 4px; margin-top: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.3s; }
+  .progress-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 5px; text-align: right; }
+  .reset-note { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="header">
+    <h1>My dashboard</h1>
+    <span class="date" id="date-label"></span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Tasks completed today</div>
+      <div class="card-value" id="stat-done">0 / 0</div>
+      <div class="card-sub" id="stat-pct">No tasks yet</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Streak</div>
+      <div class="card-value" id="stat-streak">0</div>
+      <div class="card-sub">days all tasks completed</div>
+    </div>
+  </div>
+
+  <div class="checklist-card">
+    <div class="section-title">Daily checklist</div>
+    <div id="task-list"></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-label" id="prog-label">0%</div>
+    <div class="add-section">
+      <div class="add-row">
+        <input type="text" id="new-task" placeholder="Task name..." onkeydown="if(event.key==='Enter')focusUrl()" />
+      </div>
+      <div class="url-row">
+        <input type="text" id="new-url" placeholder="Link URL (optional)..." onkeydown="if(event.key==='Enter')addTask()" />
+        <button onclick="addTask()">Add</button>
+      </div>
+      <div class="url-hint">Press Enter in task name to jump to URL field, then Enter again to save</div>
+    </div>
+  </div>
+  <div class="reset-note" id="reset-note"></div>
+</div>
+
+<script>
+const SK = 'dashboard_v2', STK = 'dashboard_streak_v2';
+const extIcon = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2v8h8V7M7 1h4v4M11 1L5.5 6.5"/></svg>`;
+
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function load(k) { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+let state = { date: todayStr(), tasks: [] };
+let streak = load(STK) || { count: 0, lastCompleted: null };
+
+function initState() {
+  const saved = load(SK), today = todayStr();
+  if (saved && saved.date === today) { state = saved; return; }
+  if (saved) {
+    const allDone = saved.tasks.length > 0 && saved.tasks.every(t => t.done);
+    const yest = new Date(); yest.setDate(yest.getDate() - 1);
+    const yStr = yest.toISOString().slice(0, 10);
+    if (allDone) {
+      streak.count = (streak.lastCompleted === yStr || streak.lastCompleted === saved.date) ? streak.count + 1 : 1;
+      streak.lastCompleted = saved.date; save(STK, streak);
+    } else if (streak.lastCompleted !== yStr) { streak.count = 0; save(STK, streak); }
+    state = { date: today, tasks: saved.tasks.map(t => ({ ...t, done: false })) };
+    save(SK, state);
+  }
+}
+
+function render() {
+  const list = document.getElementById('task-list');
+  list.innerHTML = '';
+  state.tasks.forEach((task, i) => {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = task.done;
+    cb.onchange = () => { state.tasks[i].done = cb.checked; save(SK, state); render(); };
+    const lbl = document.createElement('span');
+    lbl.className = 'task-label' + (task.done ? ' done' : '');
+    lbl.textContent = task.text;
+    row.appendChild(cb); row.appendChild(lbl);
+    if (task.url) {
+      const a = document.createElement('a');
+      a.className = 'task-link' + (task.done ? ' done-link' : '');
+      a.href = task.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.innerHTML = 'Open ' + extIcon;
+      row.appendChild(a);
+    }
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-btn'; editBtn.title = 'Edit link'; editBtn.innerHTML = '&#9998;';
+    editBtn.onclick = () => showEditLink(i, row, task);
+    const del = document.createElement('button');
+    del.className = 'delete-btn'; del.title = 'Remove'; del.innerHTML = '&times;';
+    del.onclick = () => { state.tasks.splice(i, 1); save(SK, state); render(); };
+    row.appendChild(editBtn); row.appendChild(del);
+    list.appendChild(row);
+  });
+  const total = state.tasks.length, done = state.tasks.filter(t => t.done).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('stat-done').textContent = done + ' / ' + total;
+  document.getElementById('stat-pct').textContent = total ? pct + '% complete' : 'Add tasks below';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = pct + '%';
+  document.getElementById('stat-streak').textContent = streak.count;
+  if (total > 0 && done === total) {
+    const today = todayStr();
+    if (streak.lastCompleted !== today) {
+      streak.count++; streak.lastCompleted = today; save(STK, streak);
+      document.getElementById('stat-streak').textContent = streak.count;
+    }
+  }
+}
+
+function showEditLink(i, row, task) {
+  const existing = row.querySelector('.inline-edit');
+  if (existing) { existing.remove(); return; }
+  const wrap = document.createElement('div'); wrap.className = 'inline-edit';
+  const inp = document.createElement('input');
+  inp.type = 'text'; inp.placeholder = 'https://...'; inp.value = task.url || '';
+  const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save';
+  saveBtn.onclick = () => { state.tasks[i].url = inp.value.trim() || null; save(SK, state); render(); };
+  inp.onkeydown = (e) => { if (e.key === 'Enter') saveBtn.click(); };
+  const clearBtn = document.createElement('button'); clearBtn.textContent = 'Clear';
+  clearBtn.onclick = () => { state.tasks[i].url = null; save(SK, state); render(); };
+  wrap.appendChild(inp); wrap.appendChild(saveBtn); wrap.appendChild(clearBtn);
+  row.insertAdjacentElement('afterend', wrap); inp.focus();
+}
+
+function focusUrl() { document.getElementById('new-url').focus(); }
+
+function addTask() {
+  const nameEl = document.getElementById('new-task'), urlEl = document.getElementById('new-url');
+  const text = nameEl.value.trim(); if (!text) return;
+  let url = urlEl.value.trim() || null;
+  if (url && !url.startsWith('http')) url = 'https://' + url;
+  state.tasks.push({ text, done: false, url }); save(SK, state);
+  nameEl.value = ''; urlEl.value = ''; nameEl.focus(); render();
+}
+
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now = new Date();
+document.getElementById('date-label').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+const nextReset = new Date(); nextReset.setHours(0, 0, 0, 0);
+if (nextReset <= now) nextReset.setDate(nextReset.getDate() + 1);
+document.getElementById('reset-note').textContent = 'Checklist resets daily at midnight · next reset in ~' + Math.round((nextReset - now) / 36e5) + 'h';
+initState(); render();
+</script>
+</body>
+</html>
