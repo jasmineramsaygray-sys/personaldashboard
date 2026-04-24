@@ -38,24 +38,48 @@
     background: var(--color-background-tertiary);
     color: var(--color-text-primary);
     min-height: 100vh;
-    padding: 2rem 1rem;
+    padding: 2rem 1.5rem;
   }
-  .dash { max-width: 680px; margin: 0 auto; }
+
+  /* ── Layout ── */
+  .dash { max-width: 1100px; margin: 0 auto; }
   .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
   .header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
   .date { font-size: 13px; color: var(--color-text-secondary); }
-  .section-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 16px; }
+
+  .body-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: auto;
+    gap: 16px;
+    align-items: start;
+  }
+  .main-col { display: flex; flex-direction: column; gap: 16px; }
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .full-width { grid-column: 1 / -1; }
+
+  /* ── Cards ── */
+  .section-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+  }
   .section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
   .section-hint { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; }
+
+  /* ── Daily priorities ── */
   .priority-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
   .priority-row:last-of-type { border-bottom: none; }
   .priority-num { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); width: 16px; flex-shrink: 0; }
   .priority-input { flex: 1; font-size: 14px; border: none; background: transparent; color: var(--color-text-primary); outline: none; padding: 2px 4px; border-radius: 4px; }
   .priority-input::placeholder { color: var(--color-text-tertiary); }
   .priority-input:focus { background: var(--color-background-secondary); }
+
+  /* ── Weekly priorities ── */
   .weekly-textarea {
     width: 100%;
-    min-height: 120px;
+    min-height: 100px;
     font-size: 14px;
     font-family: var(--font-sans);
     color: var(--color-text-primary);
@@ -69,6 +93,29 @@
   }
   .weekly-textarea::placeholder { color: var(--color-text-tertiary); }
   .weekly-textarea:focus { background: var(--color-background-secondary); }
+
+  /* ── Calendar sidebar ── */
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .cal-refresh { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 13px; padding: 2px 5px; border-radius: 4px; opacity: 0.6; }
+  .cal-refresh:hover { opacity: 1; background: var(--color-background-secondary); }
+  .cal-status { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .cal-empty { font-size: 13px; color: var(--color-text-tertiary); padding: 2px 0; }
+  .meeting-row { padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .meeting-row:last-of-type { border-bottom: none; }
+  .meeting-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 2px; }
+  .meeting-time { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
+  .meeting-badge { font-size: 10px; padding: 1px 6px; border-radius: 20px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+  .badge-next { background: #E6F1FB; color: #185FA5; }
+  .badge-now  { background: #E6F9F2; color: #1D9E75; }
+  .badge-done { color: var(--color-text-tertiary); background: var(--color-background-secondary); }
+  .meeting-title { font-size: 13px; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+  .meeting-meta { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (prefers-color-scheme: dark) {
+    .badge-next { background: rgba(12,68,124,0.25); color: #6BAEE8; }
+    .badge-now  { background: rgba(29,158,117,0.2); color: #3DC99A; }
+  }
+
+  /* ── Checklist ── */
   .task-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
   .task-row:last-of-type { border-bottom: none; }
   .task-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; flex-shrink: 0; cursor: pointer; }
@@ -98,7 +145,7 @@
   .progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 4px; margin-top: 12px; overflow: hidden; }
   .progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.3s; }
   .progress-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 5px; text-align: right; }
-  .reset-note { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 8px; }
+  .reset-note { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -108,114 +155,241 @@
     <span class="date" id="date-label"></span>
   </div>
 
-  <div class="section-card">
-    <div class="section-title">Weekly priorities</div>
-    <div class="section-hint">What are you focused on this week? This stays until you change it.</div>
-    <textarea class="weekly-textarea" id="weekly-priorities" placeholder="Write your priorities for this week..."></textarea>
-  </div>
+  <div class="body-layout">
 
-  <div class="section-card">
-    <div class="section-title">Top 3 priorities today</div>
-    <div class="section-hint">What are the three things that matter most today?</div>
-    <div class="priority-row">
-      <span class="priority-num">1</span>
-      <input class="priority-input" id="p1" type="text" placeholder="Your first priority..." />
-    </div>
-    <div class="priority-row">
-      <span class="priority-num">2</span>
-      <input class="priority-input" id="p2" type="text" placeholder="Your second priority..." />
-    </div>
-    <div class="priority-row">
-      <span class="priority-num">3</span>
-      <input class="priority-input" id="p3" type="text" placeholder="Your third priority..." />
-    </div>
-  </div>
+    <!-- ── LEFT MAIN COLUMN ── -->
+    <div class="main-col">
 
-  <div class="section-card">
-    <div class="section-title">Daily checklist</div>
-    <div class="section-hint">Double-click a task name to edit it · pencil icon to edit its link</div>
-    <div id="task-list"></div>
-    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="progress-label" id="prog-label">0%</div>
-    <div class="add-section">
-      <div class="add-row">
-        <input type="text" id="new-task" placeholder="Task name..." onkeydown="if(event.key==='Enter')focusUrl()" />
+      <!-- Daily priorities -->
+      <div class="section-card">
+        <div class="section-title">Top 3 priorities today</div>
+        <div class="section-hint">What are the three things that matter most today?</div>
+        <div class="priority-row">
+          <span class="priority-num">1</span>
+          <input class="priority-input" id="p1" type="text" placeholder="Your first priority…" />
+        </div>
+        <div class="priority-row">
+          <span class="priority-num">2</span>
+          <input class="priority-input" id="p2" type="text" placeholder="Your second priority…" />
+        </div>
+        <div class="priority-row">
+          <span class="priority-num">3</span>
+          <input class="priority-input" id="p3" type="text" placeholder="Your third priority…" />
+        </div>
       </div>
-      <div class="url-row">
-        <input type="text" id="new-url" placeholder="Link URL (optional)..." onkeydown="if(event.key==='Enter')addTask()" />
-        <button onclick="addTask()">Add</button>
+
+      <!-- Checklist -->
+      <div class="section-card">
+        <div class="section-title">Daily checklist</div>
+        <div class="section-hint">Double-click a task name to edit it · pencil icon to edit its link</div>
+        <div id="task-list"></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="progress-label" id="prog-label">0%</div>
+        <div class="add-section">
+          <div class="add-row">
+            <input type="text" id="new-task" placeholder="Task name…" onkeydown="if(event.key==='Enter')focusUrl()" />
+          </div>
+          <div class="url-row">
+            <input type="text" id="new-url" placeholder="Link URL (optional)…" onkeydown="if(event.key==='Enter')addTask()" />
+            <button onclick="addTask()">Add</button>
+          </div>
+          <div class="url-hint">Enter in task name jumps to URL field · Enter again to save</div>
+        </div>
       </div>
-      <div class="url-hint">Enter in task name jumps to URL field · Enter again to save</div>
+
+    </div><!-- /main-col -->
+
+    <!-- ── RIGHT SIDEBAR ── -->
+    <div class="sidebar">
+      <div class="section-card">
+        <div class="cal-header">
+          <div class="section-title">Today's meetings</div>
+          <button class="cal-refresh" onclick="loadCalendar()" title="Refresh">↻</button>
+        </div>
+        <div class="cal-status" id="cal-status">Loading…</div>
+        <div id="cal-list"></div>
+      </div>
     </div>
-  </div>
+
+    <!-- ── WEEKLY PRIORITIES — full width at bottom ── -->
+    <div class="section-card full-width">
+      <div class="section-title">Weekly priorities</div>
+      <div class="section-hint">What are you focused on this week? This stays until you change it.</div>
+      <textarea class="weekly-textarea" id="weekly-priorities" placeholder="Write your priorities for this week…"></textarea>
+    </div>
+
+  </div><!-- /body-layout -->
+
   <div class="reset-note" id="reset-note"></div>
 </div>
 
 <script>
+// ── Config ────────────────────────────────────────────────────────────────────
+const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
+const PROXY    = 'https://corsproxy.io/?url=';
+
+// ── Storage ───────────────────────────────────────────────────────────────────
 const SK = 'dashboard_v2', PK = 'dashboard_priorities_v1', WK = 'dashboard_weekly_v1';
 const extIcon = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2v8h8V7M7 1h4v4M11 1L5.5 6.5"/></svg>`;
-
 function todayStr() { return new Date().toISOString().slice(0, 10); }
 function load(k) { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } }
 function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 
-let state = { date: todayStr(), tasks: [] };
-
-function initState() {
-  const saved = load(SK), today = todayStr();
-  if (saved && saved.date === today) { state = saved; return; }
-  if (saved) {
-    state = { date: today, tasks: saved.tasks.map(t => ({ ...t, done: false })) };
-    save(SK, state);
+// ── iCal parser ───────────────────────────────────────────────────────────────
+function parseIcal(text) {
+  text = text.replace(/\r\n[ \t]/g, '').replace(/\r/g, '');
+  const events = [];
+  const blocks = text.split('BEGIN:VEVENT');
+  blocks.shift();
+  for (const block of blocks) {
+    const get = (key) => {
+      const re = new RegExp('^' + key + '(?:;[^:]+)?:(.*)$', 'm');
+      const m = block.match(re); return m ? m[1].trim() : null;
+    };
+    const summary  = get('SUMMARY') || '(No title)';
+    const location = get('LOCATION') || '';
+    const dtstart  = get('DTSTART');
+    const dtend    = get('DTEND');
+    if (!dtstart) continue;
+    const start = parseIcalDate(dtstart);
+    const end   = dtend ? parseIcalDate(dtend) : null;
+    if (!start) continue;
+    const allDay = !dtstart.includes('T');
+    events.push({ summary: unesc(summary), location: unesc(location), start, end, allDay });
   }
+  return events;
+}
+function unesc(s) {
+  return s.replace(/\\n/g,'\n').replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\\\/g,'\\');
+}
+function parseIcalDate(s) {
+  if (/^\d{8}$/.test(s))
+    return new Date(+s.slice(0,4), +s.slice(4,6)-1, +s.slice(6,8));
+  if (s.endsWith('Z'))
+    return new Date(Date.UTC(+s.slice(0,4),+s.slice(4,6)-1,+s.slice(6,8),+s.slice(9,11),+s.slice(11,13),+s.slice(13,15)));
+  const m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+  if (m) return new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]);
+  return null;
+}
+function todayEvents(events) {
+  const now = new Date();
+  const dayStart = new Date(now); dayStart.setHours(0,0,0,0);
+  const dayEnd   = new Date(now); dayEnd.setHours(23,59,59,999);
+  return events
+    .filter(e => !e.allDay && e.start >= dayStart && e.start <= dayEnd)
+    .sort((a,b) => a.start - b.start);
 }
 
-function initPriorities() {
-  const saved = load(PK), today = todayStr();
-  if (saved && saved.date === today) {
-    document.getElementById('p1').value = saved.p1 || '';
-    document.getElementById('p2').value = saved.p2 || '';
-    document.getElementById('p3').value = saved.p3 || '';
-  } else {
-    save(PK, { date: today, p1: '', p2: '', p3: '' });
-  }
+// ── Calendar render ───────────────────────────────────────────────────────────
+function fmt12(d) {
+  let h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  return h + (m ? ':' + String(m).padStart(2,'0') : '') + ap;
+}
+function fmtDur(s, e) {
+  if (!e) return '';
+  const mins = Math.round((e - s) / 60000);
+  if (mins < 60) return mins + 'm';
+  const h = Math.floor(mins/60), m = mins%60;
+  return h + 'h' + (m ? m + 'm' : '');
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function savePriorities() {
-  save(PK, {
-    date: todayStr(),
-    p1: document.getElementById('p1').value,
-    p2: document.getElementById('p2').value,
-    p3: document.getElementById('p3').value
+function renderCalendar(meetings) {
+  const list   = document.getElementById('cal-list');
+  const status = document.getElementById('cal-status');
+  list.innerHTML = '';
+  const now = new Date();
+  status.textContent = 'Last synced ' + fmt12(now);
+
+  if (!meetings.length) {
+    list.innerHTML = '<div class="cal-empty">No meetings today 🎉</div>';
+    return;
+  }
+
+  let foundNext = false;
+  meetings.forEach(m => {
+    const isPast = m.end ? m.end < now : m.start < now;
+    const isNow  = !isPast && m.start <= now && m.end && m.end > now;
+    const isNext = !isPast && !isNow && !foundNext;
+    if (isNext) foundNext = true;
+
+    const row = document.createElement('div'); row.className = 'meeting-row';
+
+    const top = document.createElement('div'); top.className = 'meeting-top';
+    const timeEl = document.createElement('span'); timeEl.className = 'meeting-time';
+    timeEl.textContent = fmt12(m.start) + (m.end ? ' · ' + fmtDur(m.start, m.end) : '');
+    const badge = document.createElement('span');
+    badge.className = 'meeting-badge ' + (isNow ? 'badge-now' : isNext ? 'badge-next' : 'badge-done');
+    badge.textContent = isNow ? 'Now' : isNext ? 'Next' : 'Done';
+    top.appendChild(timeEl); top.appendChild(badge);
+
+    const titleEl = document.createElement('div'); titleEl.className = 'meeting-title';
+    titleEl.textContent = m.summary;
+
+    row.appendChild(top); row.appendChild(titleEl);
+    if (m.location) {
+      const loc = document.createElement('div'); loc.className = 'meeting-meta';
+      loc.textContent = '📍 ' + m.location;
+      row.appendChild(loc);
+    }
+    list.appendChild(row);
   });
 }
 
-function initWeekly() {
-  const saved = load(WK);
-  if (saved && saved.text) {
-    document.getElementById('weekly-priorities').value = saved.text;
+async function loadCalendar() {
+  const status = document.getElementById('cal-status');
+  const list   = document.getElementById('cal-list');
+  status.textContent = 'Syncing…';
+  list.innerHTML = '';
+  try {
+    const res = await fetch(PROXY + encodeURIComponent(ICAL_URL));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    renderCalendar(todayEvents(parseIcal(text)));
+  } catch (err) {
+    status.textContent = 'Could not load — try refreshing.';
+    list.innerHTML = `<div class="cal-empty">⚠️ ${esc(String(err))}</div>`;
   }
 }
 
-function saveWeekly() {
-  save(WK, { text: document.getElementById('weekly-priorities').value });
+// ── Priorities ────────────────────────────────────────────────────────────────
+function initPriorities() {
+  const saved = load(PK), today = todayStr();
+  if (saved && saved.date === today) {
+    ['p1','p2','p3'].forEach(id => document.getElementById(id).value = saved[id] || '');
+  } else { save(PK, { date: today, p1:'', p2:'', p3:'' }); }
 }
+function savePriorities() {
+  save(PK, { date: todayStr(), p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, p3: document.getElementById('p3').value });
+}
+['p1','p2','p3'].forEach(id => document.getElementById(id).addEventListener('input', savePriorities));
 
-['p1', 'p2', 'p3'].forEach(id => {
-  document.getElementById(id).addEventListener('input', savePriorities);
-});
-
+// ── Weekly ────────────────────────────────────────────────────────────────────
+function initWeekly() {
+  const saved = load(WK);
+  if (saved && saved.text) document.getElementById('weekly-priorities').value = saved.text;
+}
+function saveWeekly() { save(WK, { text: document.getElementById('weekly-priorities').value }); }
 document.getElementById('weekly-priorities').addEventListener('input', saveWeekly);
 
+// ── Checklist ─────────────────────────────────────────────────────────────────
+let state = { date: todayStr(), tasks: [] };
+function initState() {
+  const saved = load(SK), today = todayStr();
+  if (saved && saved.date === today) { state = saved; return; }
+  if (saved) { state = { date: today, tasks: saved.tasks.map(t => ({...t, done: false})) }; save(SK, state); }
+}
 function startEditName(i, lbl) {
   const inp = document.createElement('input');
   inp.className = 'task-name-input'; inp.value = state.tasks[i].text;
   lbl.replaceWith(inp); inp.focus(); inp.select();
   function commit() { const val = inp.value.trim(); if (val) state.tasks[i].text = val; save(SK, state); render(); }
   inp.onblur = commit;
-  inp.onkeydown = (e) => { if (e.key === 'Enter') { inp.onblur = null; commit(); } if (e.key === 'Escape') { inp.onblur = null; render(); } };
+  inp.onkeydown = e => { if (e.key==='Enter'){inp.onblur=null;commit();} if(e.key==='Escape'){inp.onblur=null;render();} };
 }
-
 function render() {
   const list = document.getElementById('task-list');
   list.innerHTML = '';
@@ -232,24 +406,22 @@ function render() {
       const a = document.createElement('a');
       a.className = 'task-link' + (task.done ? ' done-link' : '');
       a.href = task.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      a.innerHTML = 'Open ' + extIcon;
-      row.appendChild(a);
+      a.innerHTML = 'Open ' + extIcon; row.appendChild(a);
     }
     const editBtn = document.createElement('button');
     editBtn.className = 'edit-btn'; editBtn.title = 'Edit link'; editBtn.innerHTML = '&#9998;';
     editBtn.onclick = () => showEditLink(i, row, task);
     const del = document.createElement('button');
     del.className = 'delete-btn'; del.title = 'Remove'; del.innerHTML = '&times;';
-    del.onclick = () => { state.tasks.splice(i, 1); save(SK, state); render(); };
+    del.onclick = () => { state.tasks.splice(i,1); save(SK,state); render(); };
     row.appendChild(editBtn); row.appendChild(del);
     list.appendChild(row);
   });
-  const total = state.tasks.length, done = state.tasks.filter(t => t.done).length;
-  const pct = total ? Math.round((done / total) * 100) : 0;
+  const total = state.tasks.length, done = state.tasks.filter(t=>t.done).length;
+  const pct = total ? Math.round((done/total)*100) : 0;
   document.getElementById('prog-fill').style.width = pct + '%';
   document.getElementById('prog-label').textContent = pct + '%';
 }
-
 function showEditLink(i, row, task) {
   const existing = row.querySelector('.inline-edit');
   if (existing) { existing.remove(); return; }
@@ -257,33 +429,34 @@ function showEditLink(i, row, task) {
   const inp = document.createElement('input');
   inp.type = 'text'; inp.placeholder = 'https://...'; inp.value = task.url || '';
   const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save';
-  saveBtn.onclick = () => { state.tasks[i].url = inp.value.trim() || null; save(SK, state); render(); };
-  inp.onkeydown = (e) => { if (e.key === 'Enter') saveBtn.click(); };
+  saveBtn.onclick = () => { state.tasks[i].url = inp.value.trim() || null; save(SK,state); render(); };
+  inp.onkeydown = e => { if (e.key==='Enter') saveBtn.click(); };
   const clearBtn = document.createElement('button'); clearBtn.textContent = 'Clear';
-  clearBtn.onclick = () => { state.tasks[i].url = null; save(SK, state); render(); };
+  clearBtn.onclick = () => { state.tasks[i].url = null; save(SK,state); render(); };
   wrap.appendChild(inp); wrap.appendChild(saveBtn); wrap.appendChild(clearBtn);
   row.insertAdjacentElement('afterend', wrap); inp.focus();
 }
-
 function focusUrl() { document.getElementById('new-url').focus(); }
-
 function addTask() {
   const nameEl = document.getElementById('new-task'), urlEl = document.getElementById('new-url');
   const text = nameEl.value.trim(); if (!text) return;
   let url = urlEl.value.trim() || null;
   if (url && !url.startsWith('http')) url = 'https://' + url;
-  state.tasks.push({ text, done: false, url }); save(SK, state);
-  nameEl.value = ''; urlEl.value = ''; nameEl.focus(); render();
+  state.tasks.push({text, done: false, url}); save(SK, state);
+  nameEl.value=''; urlEl.value=''; nameEl.focus(); render();
 }
 
-const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+// ── Boot ──────────────────────────────────────────────────────────────────────
+const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const now = new Date();
 document.getElementById('date-label').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
-const nextReset = new Date(); nextReset.setHours(0, 0, 0, 0);
-if (nextReset <= now) nextReset.setDate(nextReset.getDate() + 1);
-document.getElementById('reset-note').textContent = 'Checklist resets daily at midnight · next reset in ~' + Math.round((nextReset - now) / 36e5) + 'h';
-initState(); render(); initPriorities(); initWeekly();
+const nextReset = new Date(); nextReset.setHours(0,0,0,0);
+if (nextReset <= now) nextReset.setDate(nextReset.getDate()+1);
+document.getElementById('reset-note').textContent = 'Checklist resets daily at midnight · next reset in ~' + Math.round((nextReset-now)/36e5) + 'h';
+
+initState(); render(); initPriorities(); initWeekly(); loadCalendar();
+setInterval(loadCalendar, 5 * 60 * 1000);
 </script>
 </body>
 </html>
