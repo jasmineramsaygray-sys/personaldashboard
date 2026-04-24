@@ -365,10 +365,9 @@ function promptScriptUrl() {
 // ── iCal / Calendar ───────────────────────────────────────────────
 const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
 async function fetchIcal() {
-  // Route through Apps Script to avoid unreliable third-party proxies.
-  // Falls back to allorigins if the script URL isn't set yet.
   if (SCRIPT_URL) {
-    const res = await fetch(SCRIPT_URL + '?action=ical');
+    // Simple GET — works cross-origin without CORS preflight
+    const res = await fetch(SCRIPT_URL + '?action=ical', { redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     if (json.error) throw new Error(json.error);
@@ -550,22 +549,19 @@ function closeModal(e) { if (e.target === document.getElementById('modal-backdro
 function closeModalDirect() { document.getElementById('modal-backdrop').classList.add('hidden'); document.body.style.overflow = ''; }
 
 async function fetchGoogleDoc() {
-  // Route through Apps Script — reliable, no third-party proxy needed
   if (SCRIPT_URL) {
-    const res = await fetch(SCRIPT_URL + '?action=doc');
+    // Apps Script GET requests work cross-origin (no preflight needed)
+    const res = await fetch(SCRIPT_URL + '?action=doc', { redirect: 'follow' });
     if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
     const json = await res.json();
     if (json.error) throw new Error(json.error);
     return json.contents;
   }
-  // Fallback if Apps Script not connected
+  // Fallback: direct export (works if doc is public)
   const exportUrl = 'https://docs.google.com/document/d/' + GDOC_ID + '/export?format=txt';
-  const proxyUrl  = 'https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl);
-  const res = await fetch(proxyUrl);
+  const res = await fetch(exportUrl);
   if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
-  const json = await res.json();
-  if (!json.contents) throw new Error('Empty response — is the doc shared publicly?');
-  return json.contents;
+  return await res.text();
 }
 function extractRelevantSections(docText, meetingTitle) {
   const lines = docText.split('\n');
