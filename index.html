@@ -275,13 +275,13 @@ async function sheetRead() {
 
 async function sheetWrite(payload) {
   if (!SCRIPT_URL) return;
-  const res = await fetch(SCRIPT_URL, {
+  // Use no-cors mode for writes — Apps Script doesn't support CORS preflight.
+  // We fire-and-forget with no-cors; reads confirm the data arrived.
+  await fetch(SCRIPT_URL, {
     method: 'POST',
+    mode: 'no-cors',
     body: JSON.stringify({ action: 'write', ...payload })
   });
-  if (!res.ok) throw new Error('Sheet write failed: HTTP ' + res.status);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
 }
 
 // Debounce writes so we don't hammer the API on every keystroke
@@ -292,8 +292,9 @@ function scheduleWrite(payload) {
     setSyncStatus('syncing', 'Saving…');
     try {
       await sheetWrite(payload);
-      setSyncStatus('ok', 'Saved to Google Sheets · ' + fmt12(new Date()));
+      setSyncStatus('ok', 'Saved · ' + fmt12(new Date()));
     } catch (e) {
+      // no-cors writes don't throw — this catches network failures only
       setSyncStatus('error', 'Save failed — changes kept locally');
       console.error(e);
     }
