@@ -549,6 +549,15 @@ function closeModal(e) { if (e.target === document.getElementById('modal-backdro
 function closeModalDirect() { document.getElementById('modal-backdrop').classList.add('hidden'); document.body.style.overflow = ''; }
 
 async function fetchGoogleDoc() {
+  // Route through Apps Script — reliable, no third-party proxy needed
+  if (SCRIPT_URL) {
+    const res = await fetch(SCRIPT_URL + '?action=doc');
+    if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json.contents;
+  }
+  // Fallback if Apps Script not connected
   const exportUrl = 'https://docs.google.com/document/d/' + GDOC_ID + '/export?format=txt';
   const proxyUrl  = 'https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl);
   const res = await fetch(proxyUrl);
