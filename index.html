@@ -355,6 +355,16 @@ function promptScriptUrl() {
 // ── iCal / Calendar ───────────────────────────────────────────────
 const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
 async function fetchIcal() {
+  // Route through Apps Script to avoid unreliable third-party proxies.
+  // Falls back to allorigins if the script URL isn't set yet.
+  if (SCRIPT_URL) {
+    const res = await fetch(SCRIPT_URL + '?action=ical');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json.contents;
+  }
+  // Fallback proxy
   const api = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ICAL_URL);
   const res = await fetch(api);
   if (!res.ok) throw new Error('HTTP ' + res.status);
