@@ -50,7 +50,6 @@
   .body-layout {
     display: grid;
     grid-template-columns: 1fr 280px;
-    grid-template-rows: auto;
     gap: 16px;
     align-items: start;
   }
@@ -69,12 +68,16 @@
   .section-hint { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; }
 
   /* ── Daily priorities ── */
-  .priority-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .priority-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
   .priority-row:last-of-type { border-bottom: none; }
-  .priority-num { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); width: 16px; flex-shrink: 0; }
-  .priority-input { flex: 1; font-size: 14px; border: none; background: transparent; color: var(--color-text-primary); outline: none; padding: 2px 4px; border-radius: 4px; }
+  .priority-cb { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); background: transparent; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+  .priority-cb:hover { border-color: #1D9E75; }
+  .priority-cb.ticked { background: #1D9E75; border-color: #1D9E75; }
+  .priority-cb.ticked::after { content: ''; display: block; width: 5px; height: 8px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px, -1px); }
+  .priority-input { flex: 1; font-size: 14px; border: none; background: transparent; color: var(--color-text-primary); outline: none; padding: 2px 4px; border-radius: 4px; transition: color 0.15s; }
   .priority-input::placeholder { color: var(--color-text-tertiary); }
   .priority-input:focus { background: var(--color-background-secondary); }
+  .priority-input.ticked { color: var(--color-text-tertiary); text-decoration: line-through; }
 
   /* ── Weekly priorities ── */
   .weekly-textarea {
@@ -114,6 +117,29 @@
     .badge-next { background: rgba(12,68,124,0.25); color: #6BAEE8; }
     .badge-now  { background: rgba(29,158,117,0.2); color: #3DC99A; }
   }
+
+  /* ── Prep button ── */
+  .meeting-prep-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: 4px; cursor: pointer; color: var(--color-text-tertiary); font-size: 10px; padding: 1px 6px; margin-top: 5px; opacity: 0.7; transition: opacity 0.15s, color 0.15s; white-space: nowrap; }
+  .meeting-prep-btn:hover { opacity: 1; color: #185FA5; border-color: #185FA5; }
+
+  /* ── Modal ── */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+  .modal-backdrop.hidden { display: none; }
+  .modal { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+  .modal-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 20px; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+  .modal-close:hover { color: var(--color-text-primary); }
+  .modal-sub { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 1rem; }
+  .modal-loading { font-size: 13px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px; }
+  .modal-loading::before { content: ''; display: inline-block; width: 14px; height: 14px; border: 2px solid var(--color-border-secondary); border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .modal-error { font-size: 13px; color: #E24B4A; }
+  .modal-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .modal-bullets li { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; display: flex; gap: 8px; }
+  .modal-bullets li::before { content: '•'; color: #1D9E75; font-weight: 700; flex-shrink: 0; }
+  .modal-no-notes { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; }
+  .modal-divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1rem 0; }
 
   /* ── Checklist ── */
   .task-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
@@ -165,15 +191,15 @@
         <div class="section-title">Top 3 priorities today</div>
         <div class="section-hint">What are the three things that matter most today?</div>
         <div class="priority-row">
-          <span class="priority-num">1</span>
+          <div class="priority-cb" id="cb1" onclick="togglePriority(1)"></div>
           <input class="priority-input" id="p1" type="text" placeholder="Your first priority…" />
         </div>
         <div class="priority-row">
-          <span class="priority-num">2</span>
+          <div class="priority-cb" id="cb2" onclick="togglePriority(2)"></div>
           <input class="priority-input" id="p2" type="text" placeholder="Your second priority…" />
         </div>
         <div class="priority-row">
-          <span class="priority-num">3</span>
+          <div class="priority-cb" id="cb3" onclick="togglePriority(3)"></div>
           <input class="priority-input" id="p3" type="text" placeholder="Your third priority…" />
         </div>
       </div>
@@ -223,10 +249,32 @@
   <div class="reset-note" id="reset-note"></div>
 </div>
 
+<!-- Prep modal -->
+<div class="modal-backdrop hidden" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+    </div>
+    <div class="modal-sub" id="modal-sub"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
 const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
-const PROXY    = 'https://corsproxy.io/?url=';
+
+// Fetches via allorigins.win which wraps the response in JSON — avoids the
+// 413 "request too large" error that corsproxy.io produces with long URLs.
+async function fetchIcal() {
+  const api = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ICAL_URL);
+  const res = await fetch(api);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.contents) throw new Error('Empty response from proxy');
+  return json.contents;
+}
 
 // ── Storage ───────────────────────────────────────────────────────────────────
 const SK = 'dashboard_v2', PK = 'dashboard_priorities_v1', WK = 'dashboard_weekly_v1';
@@ -335,6 +383,15 @@ function renderCalendar(meetings) {
       loc.textContent = '📍 ' + m.location;
       row.appendChild(loc);
     }
+
+    // Prep button
+    const prepBtn = document.createElement('button');
+    prepBtn.className = 'meeting-prep-btn';
+    prepBtn.textContent = '✦ Prep';
+    prepBtn.title = 'Summarise past meeting notes for this meeting';
+    prepBtn.onclick = () => openPrepModal(m.summary, fmt12(m.start));
+    row.appendChild(prepBtn);
+
     list.appendChild(row);
   });
 }
@@ -345,9 +402,7 @@ async function loadCalendar() {
   status.textContent = 'Syncing…';
   list.innerHTML = '';
   try {
-    const res = await fetch(PROXY + encodeURIComponent(ICAL_URL));
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
+    const text = await fetchIcal();
     renderCalendar(todayEvents(parseIcal(text)));
   } catch (err) {
     status.textContent = 'Could not load — try refreshing.';
@@ -360,10 +415,27 @@ function initPriorities() {
   const saved = load(PK), today = todayStr();
   if (saved && saved.date === today) {
     ['p1','p2','p3'].forEach(id => document.getElementById(id).value = saved[id] || '');
-  } else { save(PK, { date: today, p1:'', p2:'', p3:'' }); }
+    [1,2,3].forEach(n => { if (saved['t'+n]) applyTick(n, true); });
+  } else { save(PK, { date: today, p1:'', p2:'', p3:'', t1:false, t2:false, t3:false }); }
 }
 function savePriorities() {
-  save(PK, { date: todayStr(), p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, p3: document.getElementById('p3').value });
+  const saved = load(PK) || {};
+  save(PK, { date: todayStr(), p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, p3: document.getElementById('p3').value, t1: saved.t1||false, t2: saved.t2||false, t3: saved.t3||false });
+}
+function applyTick(n, ticked) {
+  const cb = document.getElementById('cb'+n);
+  const inp = document.getElementById('p'+n);
+  cb.classList.toggle('ticked', ticked);
+  inp.classList.toggle('ticked', ticked);
+}
+function togglePriority(n) {
+  const saved = load(PK) || {};
+  const key = 't' + n;
+  const newVal = !saved[key];
+  saved[key] = newVal;
+  saved.date = todayStr();
+  save(PK, saved);
+  applyTick(n, newVal);
 }
 ['p1','p2','p3'].forEach(id => document.getElementById(id).addEventListener('input', savePriorities));
 
@@ -444,6 +516,153 @@ function addTask() {
   if (url && !url.startsWith('http')) url = 'https://' + url;
   state.tasks.push({text, done: false, url}); save(SK, state);
   nameEl.value=''; urlEl.value=''; nameEl.focus(); render();
+}
+
+// ── Meeting prep modal ───────────────────────────────────────────────────────
+const GDOC_ID = '13wfl9JW-k6_mi7sweAsyuHdWigxRCMVGqC4pItFwpB0';
+
+function openPrepModal(meetingTitle, meetingTime) {
+  document.getElementById('modal-title').textContent = meetingTitle;
+  document.getElementById('modal-sub').textContent = meetingTime + ' today';
+  document.getElementById('modal-body').innerHTML = '<div class="modal-loading">Searching your meeting notes…</div>';
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  runPrepSummary(meetingTitle);
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-backdrop').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+async function fetchGoogleDoc() {
+  // Export the Google Doc as plain text via the public export URL
+  const exportUrl = 'https://docs.google.com/document/d/' + GDOC_ID + '/export?format=txt';
+  const proxyUrl  = 'https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl);
+  const res = await fetch(proxyUrl);
+  if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
+  const json = await res.json();
+  if (!json.contents) throw new Error('Empty response — is the doc shared publicly (anyone with link can view)?');
+  return json.contents;
+}
+
+function extractRelevantSections(docText, meetingTitle) {
+  // Split on heading lines — lines that look like "Name - Date" or contain the person/team name
+  const lines = docText.split('
+');
+  const titleWords = meetingTitle.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(w => w.length > 2);
+
+  const sections = [];
+  let current = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    // Detect heading: non-empty line followed by the pattern of a name + date
+    const isHeading = /\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(trimmed) && trimmed.length < 120;
+    if (isHeading) {
+      if (current) sections.push(current);
+      current = { heading: trimmed, lines: [] };
+    } else if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) sections.push(current);
+
+  if (sections.length === 0) return null; // couldn't parse, return all text
+
+  // Score each section by how many title words appear in the heading
+  const scored = sections.map(s => {
+    const h = s.heading.toLowerCase();
+    const score = titleWords.reduce((acc, w) => acc + (h.includes(w) ? 1 : 0), 0);
+    return { ...s, score };
+  });
+
+  // Take sections with score > 0, sorted best first, capped to avoid huge prompts
+  const matches = scored.filter(s => s.score > 0).sort((a,b) => b.score - a.score).slice(0, 5);
+  if (matches.length === 0) return null;
+
+  return matches.map(s => '## ' + s.heading + '
+' + s.lines.join('
+')).join('
+
+');
+}
+
+async function runPrepSummary(meetingTitle) {
+  const bodyEl = document.getElementById('modal-body');
+  try {
+    const docText = await fetchGoogleDoc();
+    const relevant = extractRelevantSections(docText, meetingTitle);
+
+    if (!relevant) {
+      bodyEl.innerHTML = '<div class="modal-no-notes">No past notes found for this meeting. Once you add notes with a matching heading, they'll appear here.</div>';
+      return;
+    }
+
+    bodyEl.innerHTML = '<div class="modal-loading">Summarising with AI…</div>';
+
+    const prompt = `You are a personal assistant helping someone prepare for an upcoming meeting called "${meetingTitle}".
+
+Below are their notes from previous meetings with this person or on this topic. 
+Summarise the most useful things to know before the next meeting in 3–5 concise bullet points.
+Focus on: open action items, things that were discussed or promised, any tensions or context worth remembering.
+Be direct and specific — no fluff. Use the exact names and details from the notes.
+
+PAST MEETING NOTES:
+${relevant.slice(0, 6000)}
+
+Respond ONLY with a JSON array of strings, each string being one bullet point. No preamble, no markdown, no code fences. Example: ["Action item from last time: X", "She mentioned Y"]`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error('AI request failed (HTTP ' + response.status + ')');
+    const data = await response.json();
+    const raw = data.content.find(b => b.type === 'text')?.text || '[]';
+
+    let bullets;
+    try {
+      bullets = JSON.parse(raw.trim());
+    } catch {
+      // Fallback: split on newlines if JSON parse fails
+      bullets = raw.split('
+').map(l => l.replace(/^[-•*\d.]\s*/, '').trim()).filter(Boolean);
+    }
+
+    if (!bullets.length) {
+      bodyEl.innerHTML = '<div class="modal-no-notes">No specific points surfaced — check your notes doc for this meeting.</div>';
+      return;
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'modal-bullets';
+    bullets.forEach(b => {
+      const li = document.createElement('li');
+      li.textContent = b;
+      ul.appendChild(li);
+    });
+
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:11px;color:var(--color-text-tertiary);margin-top:1rem;';
+    note.textContent = 'Based on past notes matching "' + meetingTitle + '"';
+
+    bodyEl.innerHTML = '';
+    bodyEl.appendChild(ul);
+    bodyEl.appendChild(note);
+
+  } catch (err) {
+    bodyEl.innerHTML = '<div class="modal-error">⚠️ ' + esc(String(err)) + '<br><br><span style="color:var(--color-text-tertiary);font-size:12px;">Make sure your Google Doc is shared as "Anyone with the link can view".</span></div>';
+  }
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
