@@ -301,31 +301,40 @@ function scheduleWrite(payload) {
 }
 
 // ── Boot: load from sheet, fall back to localStorage ─────────────
-async function bootData() {
+function bootData() {
+  // 1. Show local data immediately — zero wait
+  loadFromLocal();
+
+  // 2. If no sheet connected, show prompt and stop
   if (!SCRIPT_URL) {
-    setSyncStatus('error', 'Google Sheets not connected — data saved locally only. ' );
-    // Prompt to set up
     document.getElementById('sync-label').innerHTML =
       'Google Sheets not connected — <span class="sync-setup-link" onclick="promptScriptUrl()">click here to connect</span>';
-    loadFromLocal();
+    document.getElementById('sync-dot').className = 'sync-dot error';
     return;
   }
 
-  setSyncStatus('syncing', 'Loading from Google Sheets…');
-  try {
-    const remote = await sheetRead();
-    // Merge: remote is source of truth for tasks & weekly
-    state.tasks = remote.tasks || [];
-    lsave(SK, { date: todayStr(), tasks: state.tasks });
-    lsave(WK, { text: remote.weekly || '' });
-    document.getElementById('weekly-priorities').value = remote.weekly || '';
+  // 3. Sync from sheet in the background — doesn't block the UI
+  setSyncStatus('syncing', 'Syncing…');
+  sheetRead().then(remote => {
+    // Only update if sheet has data that differs from local
+    const remoteTasksJson = JSON.stringify(remote.tasks || []);
+    const localTasksJson  = JSON.stringify(state.tasks);
+    if (remoteTasksJson !== localTasksJson) {
+      state.tasks = remote.tasks || [];
+      lsave(SK, { date: todayStr(), tasks: state.tasks });
+      render();
+    }
+    const remoteWeekly = remote.weekly || '';
+    const localWeekly  = document.getElementById('weekly-priorities').value;
+    if (remoteWeekly !== localWeekly) {
+      document.getElementById('weekly-priorities').value = remoteWeekly;
+      lsave(WK, { text: remoteWeekly });
+    }
     setSyncStatus('ok', 'Synced · ' + fmt12(new Date()));
-  } catch (e) {
-    setSyncStatus('error', 'Could not reach Google Sheets — showing local data');
-    loadFromLocal();
+  }).catch(e => {
+    setSyncStatus('error', 'Sync failed — showing local data');
     console.error(e);
-  }
-  render();
+  });
 }
 
 function loadFromLocal() {
