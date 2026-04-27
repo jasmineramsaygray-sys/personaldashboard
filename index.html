@@ -33,40 +33,91 @@
       --color-border-secondary: rgba(255,255,255,0.18);
     }
   }
-  body {
-    font-family: var(--font-sans);
-    background: var(--color-background-tertiary);
-    color: var(--color-text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  .dash { max-width: 680px; margin: 0 auto; }
-  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
-  .header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
-  .header-right { display: flex; align-items: baseline; gap: 12px; }
-  .date { font-size: 13px; color: var(--color-text-secondary); }
-  .save-indicator { font-size: 11px; color: var(--color-text-tertiary); }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
-  .card-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
-  .card-value { font-size: 26px; font-weight: 500; color: var(--color-text-primary); }
-  .card-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
-  .section-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 16px; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-  .section-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
-  .section-hint { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; }
-  .icon-btn { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); padding: 2px 4px; border-radius: 4px; font-size: 13px; opacity: 0.6; }
-  .icon-btn:hover { opacity: 1; background: var(--color-background-secondary); }
+  body { font-family: var(--font-sans); background: var(--color-background-tertiary); color: var(--color-text-primary); min-height: 100vh; padding: 2rem 1.5rem; }
 
-  /* Priorities */
-  .priority-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  /* ── Layout ── */
+  .dash { max-width: 1100px; margin: 0 auto; }
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 22px; font-weight: 500; }
+  .date { font-size: 13px; color: var(--color-text-secondary); }
+  .body-layout { display: grid; grid-template-columns: 1fr 280px; gap: 16px; align-items: start; }
+  .main-col { display: flex; flex-direction: column; gap: 16px; }
+  .sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .full-width { grid-column: 1 / -1; }
+
+  /* ── Cards ── */
+  .section-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .section-title { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+  .section-hint { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; }
+
+  /* ── Sync status bar ── */
+  .sync-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 1.25rem; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-text-tertiary); flex-shrink: 0; }
+  .sync-dot.ok      { background: #1D9E75; }
+  .sync-dot.error   { background: #E24B4A; }
+  .sync-dot.syncing { background: #F5A623; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .sync-setup-link { color: #185FA5; cursor: pointer; text-decoration: underline; }
+
+  /* ── Daily priorities ── */
+  .priority-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
   .priority-row:last-of-type { border-bottom: none; }
-  .priority-num { font-size: 13px; font-weight: 500; color: var(--color-text-tertiary); width: 16px; flex-shrink: 0; }
-  .priority-input { flex: 1; font-size: 14px; border: none; background: transparent; color: var(--color-text-primary); outline: none; padding: 2px 4px; border-radius: 4px; }
+  .priority-cb { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); background: transparent; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; }
+  .priority-cb:hover { border-color: #1D9E75; }
+  .priority-cb.ticked { background: #1D9E75; border-color: #1D9E75; }
+  .priority-cb.ticked::after { content: ''; display: block; width: 5px; height: 8px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translate(-1px, -1px); }
+  .priority-input { flex: 1; font-size: 14px; border: none; background: transparent; color: var(--color-text-primary); outline: none; padding: 2px 4px; border-radius: 4px; transition: color 0.15s; }
   .priority-input::placeholder { color: var(--color-text-tertiary); }
   .priority-input:focus { background: var(--color-background-secondary); }
+  .priority-input.ticked { color: var(--color-text-tertiary); text-decoration: line-through; }
 
-  /* Tasks */
+  /* ── Weekly priorities ── */
+  .weekly-textarea { width: 100%; min-height: 100px; font-size: 14px; font-family: var(--font-sans); color: var(--color-text-primary); background: transparent; border: none; outline: none; resize: vertical; line-height: 1.6; padding: 2px 4px; border-radius: 4px; }
+  .weekly-textarea::placeholder { color: var(--color-text-tertiary); }
+  .weekly-textarea:focus { background: var(--color-background-secondary); }
+
+  /* ── Calendar sidebar ── */
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .cal-refresh { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 13px; padding: 2px 5px; border-radius: 4px; opacity: 0.6; }
+  .cal-refresh:hover { opacity: 1; background: var(--color-background-secondary); }
+  .cal-status { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 8px; }
+  .cal-empty { font-size: 13px; color: var(--color-text-tertiary); padding: 2px 0; }
+  .meeting-row { padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .meeting-row:last-of-type { border-bottom: none; }
+  .meeting-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 2px; }
+  .meeting-time { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); flex-shrink: 0; }
+  .meeting-badge { font-size: 10px; padding: 1px 6px; border-radius: 20px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+  .badge-next { background: #E6F1FB; color: #185FA5; }
+  .badge-now  { background: #E6F9F2; color: #1D9E75; }
+  .badge-done { color: var(--color-text-tertiary); background: var(--color-background-secondary); }
+  .meeting-title { font-size: 13px; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+  .meeting-meta { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (prefers-color-scheme: dark) {
+    .badge-next { background: rgba(12,68,124,0.25); color: #6BAEE8; }
+    .badge-now  { background: rgba(29,158,117,0.2); color: #3DC99A; }
+  }
+  .meeting-prep-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: 4px; cursor: pointer; color: var(--color-text-tertiary); font-size: 10px; padding: 1px 6px; margin-top: 5px; opacity: 0.7; transition: opacity 0.15s, color 0.15s; white-space: nowrap; }
+  .meeting-prep-btn:hover { opacity: 1; color: #185FA5; border-color: #185FA5; }
+
+  /* ── Modal ── */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+  .modal-backdrop.hidden { display: none; }
+  .modal { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+  .modal-title { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 20px; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+  .modal-close:hover { color: var(--color-text-primary); }
+  .modal-sub { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 1rem; }
+  .modal-loading { font-size: 13px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px; }
+  .modal-loading::before { content: ''; display: inline-block; width: 14px; height: 14px; border: 2px solid var(--color-border-secondary); border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .modal-error { font-size: 13px; color: #E24B4A; }
+  .modal-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .modal-bullets li { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; display: flex; gap: 8px; }
+  .modal-bullets li::before { content: '•'; color: #1D9E75; font-weight: 700; flex-shrink: 0; }
+  .modal-no-notes { font-size: 13px; color: var(--color-text-tertiary); font-style: italic; }
+
+  /* ── Checklist ── */
   .task-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); flex-wrap: wrap; }
   .task-row:last-of-type { border-bottom: none; }
   .task-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #1D9E75; flex-shrink: 0; cursor: pointer; }
@@ -96,607 +147,518 @@
   .progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 4px; margin-top: 12px; overflow: hidden; }
   .progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.3s; }
   .progress-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 5px; text-align: right; }
-  .reset-note { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 8px; }
-
-  /* Meetings */
-  .meeting-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
-  .meeting-row:last-of-type { border-bottom: none; }
-  .meeting-row:hover { background: var(--color-background-secondary); margin: 0 -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; border-radius: 6px; }
-  .meeting-time { font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; min-width: 70px; padding-top: 1px; }
-  .meeting-info { flex: 1; min-width: 0; }
-  .meeting-title { font-size: 14px; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meeting-title.past { color: var(--color-text-tertiary); }
-  .meeting-badge { font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
-  .badge-next { background: #E6F1FB; color: #185FA5; }
-  .badge-past { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
-  .badge-now { background: #E8F7F1; color: #1D9E75; }
-  .meetings-sync { font-size: 11px; color: var(--color-text-tertiary); }
-  .meetings-empty { font-size: 13px; color: var(--color-text-tertiary); padding: 12px 0; text-align: center; }
-
-  /* Notes panel — loads inline below meetings */
-  .notes-panel { margin-top: 12px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; }
-  .notes-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .notes-panel-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); }
-  .notes-panel-close { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 16px; line-height: 1; padding: 0 2px; }
-  .notes-panel-close:hover { color: var(--color-text-primary); }
-  .notes-content { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; max-height: 320px; overflow-y: auto; }
-  .notes-content p { margin-bottom: 8px; }
-  .notes-content h1, .notes-content h2, .notes-content h3 { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; margin-top: 10px; }
-  .notes-loading { font-size: 13px; color: var(--color-text-tertiary); padding: 8px 0; display: flex; align-items: center; gap: 8px; }
-  .notes-error { font-size: 12px; color: #b45309; background: #fef3c7; border-radius: 6px; padding: 8px 10px; }
-  .spinner { width: 14px; height: 14px; border: 2px solid var(--color-border-tertiary); border-top-color: #1D9E75; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Settings panel */
-  .settings-panel { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-  .settings-row { display: flex; flex-direction: column; gap: 4px; }
-  .settings-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; }
-  .settings-input { font-size: 13px; padding: 6px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); outline: none; width: 100%; }
-  .settings-input:focus { border-color: #1D9E75; }
-  .settings-hint { font-size: 10px; color: var(--color-text-tertiary); }
-  .settings-save-btn { font-size: 13px; padding: 6px 16px; border: 0.5px solid #1D9E75; border-radius: var(--border-radius-md); background: transparent; color: #1D9E75; cursor: pointer; align-self: flex-start; }
-  .settings-save-btn:hover { background: #E8F7F1; }
+  .reset-note { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 12px; }
 </style>
 </head>
 <body>
 <div class="dash">
   <div class="header">
     <h1>My dashboard</h1>
-    <div class="header-right">
-      <span class="save-indicator" id="save-indicator"></span>
-      <span class="date" id="date-label"></span>
-    </div>
+    <span class="date" id="date-label"></span>
   </div>
 
-  <div class="grid">
-    <div class="card">
-      <div class="card-label">Tasks completed today</div>
-      <div class="card-value" id="stat-done">0 / 0</div>
-      <div class="card-sub" id="stat-pct">No tasks yet</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Streak</div>
-      <div class="card-value" id="stat-streak">0</div>
-      <div class="card-sub">days all tasks completed</div>
-    </div>
+  <!-- Sync status -->
+  <div class="sync-bar">
+    <div class="sync-dot syncing" id="sync-dot"></div>
+    <span id="sync-label">Connecting to Google Sheets…</span>
   </div>
 
-  <!-- Meetings -->
-  <div class="section-card" id="meetings-card">
-    <div class="section-header">
-      <div>
-        <div class="section-title">Today's meetings</div>
-        <div class="section-hint" id="meetings-sync-label">Loading…</div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button class="icon-btn" id="meetings-refresh-btn" title="Refresh meetings" onclick="loadMeetings()">↻</button>
-        <button class="icon-btn" id="meetings-settings-btn" title="Settings" onclick="toggleMeetingsSettings()">⚙</button>
-      </div>
-    </div>
-    <div id="meetings-settings" style="display:none;">
-      <div class="settings-panel">
-        <div class="settings-row">
-          <span class="settings-label">Google Calendar public iCal URL</span>
-          <input class="settings-input" id="cal-url-input" type="text" placeholder="https://calendar.google.com/calendar/ical/…/basic.ics" />
-          <span class="settings-hint">In Google Calendar → Settings → your calendar → "Secret address in iCal format"</span>
+  <div class="body-layout">
+
+    <!-- ── LEFT MAIN COLUMN ── -->
+    <div class="main-col">
+
+      <!-- Daily priorities -->
+      <div class="section-card">
+        <div class="section-title">Top 3 priorities today</div>
+        <div class="section-hint">What are the three things that matter most today?</div>
+        <div class="priority-row">
+          <div class="priority-cb" id="cb1" onclick="togglePriority(1)"></div>
+          <input class="priority-input" id="p1" type="text" placeholder="Your first priority…" />
         </div>
-        <div class="settings-row">
-          <span class="settings-label">Meeting notes Google Doc URL <span style="font-weight:400;color:var(--color-text-tertiary)">(optional)</span></span>
-          <input class="settings-input" id="doc-url-input" type="text" placeholder="https://docs.google.com/document/d/…/edit" />
-          <span class="settings-hint">Doc must be published: File → Share → Publish to web → Publish. Then paste the edit URL here.</span>
+        <div class="priority-row">
+          <div class="priority-cb" id="cb2" onclick="togglePriority(2)"></div>
+          <input class="priority-input" id="p2" type="text" placeholder="Your second priority…" />
         </div>
-        <button class="settings-save-btn" onclick="saveCalSettings()">Save & reload</button>
+        <div class="priority-row">
+          <div class="priority-cb" id="cb3" onclick="togglePriority(3)"></div>
+          <input class="priority-input" id="p3" type="text" placeholder="Your third priority…" />
+        </div>
       </div>
-    </div>
-    <div id="meetings-list"></div>
 
-    <!-- Notes panel lives here, below meetings list, shown when a meeting is clicked -->
-    <div id="notes-panel" style="display:none;" class="notes-panel">
-      <div class="notes-panel-header">
-        <span class="notes-panel-title" id="notes-panel-title">Meeting notes</span>
-        <button class="notes-panel-close" onclick="closeNotes()" title="Close">×</button>
+      <!-- Checklist -->
+      <div class="section-card">
+        <div class="section-title">Daily checklist</div>
+        <div class="section-hint">Double-click a task name to edit it · pencil icon to edit its link</div>
+        <div id="task-list"></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="progress-label" id="prog-label">0%</div>
+        <div class="add-section">
+          <div class="add-row">
+            <input type="text" id="new-task" placeholder="Task name…" onkeydown="if(event.key==='Enter')focusUrl()" />
+          </div>
+          <div class="url-row">
+            <input type="text" id="new-url" placeholder="Link URL (optional)…" onkeydown="if(event.key==='Enter')addTask()" />
+            <button onclick="addTask()">Add</button>
+          </div>
+          <div class="url-hint">Enter in task name jumps to URL field · Enter again to save</div>
+        </div>
       </div>
-      <div id="notes-content" class="notes-content"></div>
-    </div>
-  </div>
 
-  <!-- Priorities -->
-  <div class="section-card">
-    <div class="section-title">Top 3 priorities today</div>
-    <div class="section-hint">What are the three things that matter most today?</div>
-    <div class="priority-row">
-      <span class="priority-num">1</span>
-      <input class="priority-input" id="p1" type="text" placeholder="Your first priority…" />
     </div>
-    <div class="priority-row">
-      <span class="priority-num">2</span>
-      <input class="priority-input" id="p2" type="text" placeholder="Your second priority…" />
-    </div>
-    <div class="priority-row">
-      <span class="priority-num">3</span>
-      <input class="priority-input" id="p3" type="text" placeholder="Your third priority…" />
-    </div>
-  </div>
 
-  <!-- Checklist -->
-  <div class="section-card">
-    <div class="section-title">Daily checklist</div>
-    <div class="section-hint">Double-click a task name to edit it · pencil icon to edit its link</div>
-    <div id="task-list"></div>
-    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="progress-label" id="prog-label">0%</div>
-    <div class="add-section">
-      <div class="add-row">
-        <input type="text" id="new-task" placeholder="Task name…" onkeydown="if(event.key==='Enter')focusUrl()" />
+    <!-- ── RIGHT SIDEBAR ── -->
+    <div class="sidebar">
+      <div class="section-card">
+        <div class="cal-header">
+          <div class="section-title">Today's meetings</div>
+          <button class="cal-refresh" onclick="loadCalendar()" title="Refresh">↻</button>
+        </div>
+        <div class="cal-status" id="cal-status">Loading…</div>
+        <div id="cal-list"></div>
       </div>
-      <div class="url-row">
-        <input type="text" id="new-url" placeholder="Link URL (optional)…" onkeydown="if(event.key==='Enter')addTask()" />
-        <button onclick="addTask()">Add</button>
-      </div>
-      <div class="url-hint">Enter in task name jumps to URL field · Enter again to save</div>
     </div>
+
+    <!-- ── WEEKLY PRIORITIES ── -->
+    <div class="section-card full-width">
+      <div class="section-title">Weekly priorities</div>
+      <div class="section-hint">What are you focused on this week? This stays until you change it — saved to Google Sheets.</div>
+      <textarea class="weekly-textarea" id="weekly-priorities" placeholder="Write your priorities for this week…"></textarea>
+    </div>
+
   </div>
 
   <div class="reset-note" id="reset-note"></div>
 </div>
 
+
 <script>
-// ── Storage keys ──────────────────────────────────────────────────────────────
-const SK  = 'dashboard_v2';
-const STK = 'dashboard_streak_v2';
-const PK  = 'dashboard_priorities_v1';
-const CAL_KEY = 'dashboard_cal_settings_v1';
+// ── CONFIG — paste your Apps Script URL here after deploying ──────
+// It looks like: https://script.google.com/macros/s/XXXXX/exec
+let SCRIPT_URL = localStorage.getItem('dashboard_script_url') || '';
 
+// ── Storage helpers ───────────────────────────────────────────────
+const SK = 'dashboard_v2', PK = 'dashboard_priorities_v1', WK = 'dashboard_weekly_v1';
 const extIcon = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2H2v8h8V7M7 1h4v4M11 1L5.5 6.5"/></svg>`;
-
 function todayStr() { return new Date().toISOString().slice(0, 10); }
-function load(k) { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } }
-function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+function lload(k) { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } }
+function lsave(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 
-// ── Task / streak state ───────────────────────────────────────────────────────
-let state  = { date: todayStr(), tasks: [] };
-let streak = load(STK) || { count: 0, lastCompleted: null };
+// ── Sync status UI ────────────────────────────────────────────────
+function setSyncStatus(state, msg) {
+  const dot   = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  dot.className = 'sync-dot ' + state;
+  label.textContent = msg;
+}
 
-function initState() {
-  const saved = load(SK), today = todayStr();
-  if (saved && saved.date === today) { state = saved; return; }
-  if (saved) {
-    const allDone = saved.tasks.length > 0 && saved.tasks.every(t => t.done);
-    const yest = new Date(); yest.setDate(yest.getDate() - 1);
-    const yStr = yest.toISOString().slice(0, 10);
-    if (allDone) {
-      streak.count = (streak.lastCompleted === yStr || streak.lastCompleted === saved.date) ? streak.count + 1 : 1;
-      streak.lastCompleted = saved.date; save(STK, streak);
-    } else if (streak.lastCompleted !== yStr) { streak.count = 0; save(STK, streak); }
-    state = { date: today, tasks: saved.tasks.map(t => ({ ...t, done: false })) };
-    save(SK, state);
+// ── Google Sheets API ─────────────────────────────────────────────
+async function sheetRead() {
+  if (!SCRIPT_URL) return null;
+  const res  = await fetch(SCRIPT_URL + '?action=read');
+  if (!res.ok) throw new Error('Sheet read failed: HTTP ' + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function sheetWrite(payload) {
+  if (!SCRIPT_URL) return;
+  // Use no-cors mode for writes — Apps Script doesn't support CORS preflight.
+  // We fire-and-forget with no-cors; reads confirm the data arrived.
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({ action: 'write', ...payload })
+  });
+}
+
+// Debounce writes so we don't hammer the API on every keystroke
+let writeTimer = null;
+function scheduleWrite(payload) {
+  clearTimeout(writeTimer);
+  writeTimer = setTimeout(async () => {
+    setSyncStatus('syncing', 'Saving…');
+    try {
+      await sheetWrite(payload);
+      setSyncStatus('ok', 'Saved · ' + fmt12(new Date()));
+    } catch (e) {
+      // no-cors writes don't throw — this catches network failures only
+      setSyncStatus('error', 'Save failed — changes kept locally');
+      console.error(e);
+    }
+  }, 1200);
+}
+
+// ── Boot: load from sheet, fall back to localStorage ─────────────
+function bootData() {
+  // 1. Show local data immediately — zero wait
+  loadFromLocal();
+
+  // 2. If no sheet connected, show prompt and stop
+  if (!SCRIPT_URL) {
+    document.getElementById('sync-label').innerHTML =
+      'Google Sheets not connected — <span class="sync-setup-link" onclick="promptScriptUrl()">click here to connect</span>';
+    document.getElementById('sync-dot').className = 'sync-dot error';
+    return;
+  }
+
+  // 3. Sync from sheet in the background — doesn't block the UI
+  setSyncStatus('syncing', 'Syncing…');
+  sheetRead().then(remote => {
+    // Only update if sheet has data that differs from local
+    const remoteTasksJson = JSON.stringify(remote.tasks || []);
+    const localTasksJson  = JSON.stringify(state.tasks);
+    if (remoteTasksJson !== localTasksJson) {
+      state.tasks = remote.tasks || [];
+      lsave(SK, { date: todayStr(), tasks: state.tasks });
+      render();
+    }
+    const remoteWeekly = remote.weekly || '';
+    const localWeekly  = document.getElementById('weekly-priorities').value;
+    if (remoteWeekly !== localWeekly) {
+      document.getElementById('weekly-priorities').value = remoteWeekly;
+      lsave(WK, { text: remoteWeekly });
+    }
+    setSyncStatus('ok', 'Synced · ' + fmt12(new Date()));
+  }).catch(e => {
+    setSyncStatus('error', 'Sync failed — showing local data');
+    console.error(e);
+  });
+}
+
+function loadFromLocal() {
+  const saved = lload(SK), today = todayStr();
+  if (saved && saved.date === today) { state.tasks = saved.tasks || []; }
+  else if (saved) { state.tasks = saved.tasks.map(t => ({ ...t, done: false })); }
+  const weekly = lload(WK);
+  if (weekly && weekly.text) document.getElementById('weekly-priorities').value = weekly.text;
+  render();
+}
+
+function promptScriptUrl() {
+  const url = prompt(
+    'Paste your Google Apps Script deployment URL here.\n' +
+    'It looks like: https://script.google.com/macros/s/XXXXX/exec\n\n' +
+    '(See the setup guide that came with your dashboard file)'
+  );
+  if (url && url.startsWith('https://script.google.com')) {
+    SCRIPT_URL = url.trim();
+    localStorage.setItem('dashboard_script_url', SCRIPT_URL);
+    bootData();
+  } else if (url) {
+    alert('That doesn\'t look right — make sure you copy the full URL starting with https://script.google.com');
   }
 }
 
-// ── Priorities ────────────────────────────────────────────────────────────────
-function initPriorities() {
-  const saved = load(PK), today = todayStr();
-  if (saved && saved.date === today) {
-    document.getElementById('p1').value = saved.p1 || '';
-    document.getElementById('p2').value = saved.p2 || '';
-    document.getElementById('p3').value = saved.p3 || '';
-  } else {
-    save(PK, { date: today, p1: '', p2: '', p3: '' });
+// ── iCal / Calendar ───────────────────────────────────────────────
+const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
+async function fetchIcal() {
+  if (SCRIPT_URL) {
+    // Simple GET — works cross-origin without CORS preflight
+    const res = await fetch(SCRIPT_URL + '?action=ical', { redirect: 'follow' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json.contents;
   }
+  // Fallback proxy
+  const api = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ICAL_URL);
+  const res = await fetch(api);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.contents) throw new Error('Empty response from proxy');
+  return json.contents;
+}
+function parseIcal(text) {
+  text = text.replace(/\r\n[ \t]/g, '').replace(/\r/g, '');
+  const events = [], blocks = text.split('BEGIN:VEVENT'); blocks.shift();
+  for (const block of blocks) {
+    const get = k => { const m = block.match(new RegExp('^' + k + '(?:;[^:]+)?:(.*)$', 'm')); return m ? m[1].trim() : null; };
+    const dtstart = get('DTSTART'), dtend = get('DTEND');
+    if (!dtstart) continue;
+    const start = parseIcalDate(dtstart), end = dtend ? parseIcalDate(dtend) : null;
+    if (!start) continue;
+    events.push({ summary: unesc(get('SUMMARY') || '(No title)'), location: unesc(get('LOCATION') || ''), start, end, allDay: !dtstart.includes('T') });
+  }
+  return events;
+}
+function unesc(s) { return s.replace(/\\n/g,'\n').replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\\\/g,'\\'); }
+function parseIcalDate(s) {
+  if (/^\d{8}$/.test(s)) return new Date(+s.slice(0,4),+s.slice(4,6)-1,+s.slice(6,8));
+  if (s.endsWith('Z')) return new Date(Date.UTC(+s.slice(0,4),+s.slice(4,6)-1,+s.slice(6,8),+s.slice(9,11),+s.slice(11,13),+s.slice(13,15)));
+  const m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
+  return m ? new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]) : null;
+}
+function todayEvents(events) {
+  const now = new Date(), s = new Date(now), e = new Date(now);
+  s.setHours(0,0,0,0); e.setHours(23,59,59,999);
+  return events.filter(ev => !ev.allDay && ev.start >= s && ev.start <= e).sort((a,b) => a.start-b.start);
+}
+function fmt12(d) { let h=d.getHours(),m=d.getMinutes(),ap=h>=12?'pm':'am'; h=h%12||12; return h+(m?':'+String(m).padStart(2,'0'):'')+ap; }
+function fmtDur(s,e) { if(!e)return''; const mins=Math.round((e-s)/60000); return mins<60?mins+'m':Math.floor(mins/60)+'h'+(mins%60?mins%60+'m':''); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderCalendar(meetings) {
+  const list = document.getElementById('cal-list'), status = document.getElementById('cal-status');
+  list.innerHTML = ''; const now = new Date(); status.textContent = 'Last synced ' + fmt12(now);
+  if (!meetings.length) { list.innerHTML = '<div class="cal-empty">No meetings today 🎉</div>'; return; }
+  let foundNext = false;
+  meetings.forEach(m => {
+    const isPast = m.end ? m.end < now : m.start < now;
+    const isNow  = !isPast && m.start <= now && m.end && m.end > now;
+    const isNext = !isPast && !isNow && !foundNext; if (isNext) foundNext = true;
+    const row = document.createElement('div'); row.className = 'meeting-row';
+    const top = document.createElement('div'); top.className = 'meeting-top';
+    const timeEl = document.createElement('span'); timeEl.className = 'meeting-time';
+    timeEl.textContent = fmt12(m.start) + (m.end ? ' · ' + fmtDur(m.start, m.end) : '');
+    const badge = document.createElement('span');
+    badge.className = 'meeting-badge ' + (isNow?'badge-now':isNext?'badge-next':isPast?'badge-done':'');
+    badge.textContent = isNow?'Now':isNext?'Next':isPast?'Done':'';
+    if (!badge.textContent) badge.style.display='none';
+    top.appendChild(timeEl); top.appendChild(badge);
+    const titleEl = document.createElement('div'); titleEl.className = 'meeting-title'; titleEl.textContent = m.summary;
+    row.appendChild(top); row.appendChild(titleEl);
+    if (m.location) { const loc = document.createElement('div'); loc.className = 'meeting-meta'; loc.textContent = '📍 ' + m.location; row.appendChild(loc); }
+    const prepBtn = document.createElement('button'); prepBtn.className = 'meeting-prep-btn'; prepBtn.textContent = '✦ Prep';
+    prepBtn.onclick = () => openPrepPanel(m.summary, fmt12(m.start)); row.appendChild(prepBtn);
+    list.appendChild(row);
+  });
+}
+async function loadCalendar() {
+  document.getElementById('cal-status').textContent = 'Syncing…';
+  document.getElementById('cal-list').innerHTML = '';
+  try { renderCalendar(todayEvents(parseIcal(await fetchIcal()))); }
+  catch (err) { document.getElementById('cal-status').textContent = 'Could not load — try refreshing.'; document.getElementById('cal-list').innerHTML = `<div class="cal-empty">⚠️ ${esc(String(err))}</div>`; }
+}
+
+// ── Daily priorities (local only — reset daily) ───────────────────
+function initPriorities() {
+  const saved = lload(PK), today = todayStr();
+  if (saved && saved.date === today) {
+    ['p1','p2','p3'].forEach(id => document.getElementById(id).value = saved[id] || '');
+    [1,2,3].forEach(n => { if (saved['t'+n]) applyTick(n, true); });
+  } else { lsave(PK, { date: today, p1:'', p2:'', p3:'', t1:false, t2:false, t3:false }); }
 }
 function savePriorities() {
-  save(PK, { date: todayStr(), p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, p3: document.getElementById('p3').value });
+  const saved = lload(PK) || {};
+  lsave(PK, { date: todayStr(), p1: document.getElementById('p1').value, p2: document.getElementById('p2').value, p3: document.getElementById('p3').value, t1: saved.t1||false, t2: saved.t2||false, t3: saved.t3||false });
+}
+function applyTick(n, ticked) {
+  document.getElementById('cb'+n).classList.toggle('ticked', ticked);
+  document.getElementById('p'+n).classList.toggle('ticked', ticked);
+}
+function togglePriority(n) {
+  const saved = lload(PK) || {}; const key = 't'+n; const newVal = !saved[key];
+  saved[key] = newVal; saved.date = todayStr(); lsave(PK, saved); applyTick(n, newVal);
 }
 ['p1','p2','p3'].forEach(id => document.getElementById(id).addEventListener('input', savePriorities));
 
-// ── Task render ───────────────────────────────────────────────────────────────
-function startEditName(i, lbl) {
-  const inp = document.createElement('input');
-  inp.className = 'task-name-input'; inp.value = state.tasks[i].text;
-  lbl.replaceWith(inp); inp.focus(); inp.select();
-  function commit() { const val = inp.value.trim(); if (val) state.tasks[i].text = val; save(SK, state); render(); }
-  inp.onblur = commit;
-  inp.onkeydown = e => { if (e.key === 'Enter') { inp.onblur = null; commit(); } if (e.key === 'Escape') { inp.onblur = null; render(); } };
-}
+// ── Weekly priorities (synced to Sheets) ─────────────────────────
+let weeklyTimer = null;
+document.getElementById('weekly-priorities').addEventListener('input', () => {
+  const text = document.getElementById('weekly-priorities').value;
+  lsave(WK, { text });
+  scheduleWrite({ weekly: text });
+});
+
+// ── Checklist (synced to Sheets) ──────────────────────────────────
+let state = { date: todayStr(), tasks: [] };
 
 function render() {
-  const list = document.getElementById('task-list');
-  list.innerHTML = '';
+  const list = document.getElementById('task-list'); list.innerHTML = '';
   state.tasks.forEach((task, i) => {
     const row = document.createElement('div'); row.className = 'task-row';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = task.done;
-    cb.onchange = () => { state.tasks[i].done = cb.checked; save(SK, state); render(); };
+    cb.onchange = () => { state.tasks[i].done = cb.checked; persistTasks(); render(); };
     const lbl = document.createElement('span');
-    lbl.className = 'task-label' + (task.done ? ' done' : '');
-    lbl.textContent = task.text; lbl.title = 'Double-click to edit';
+    lbl.className = 'task-label' + (task.done ? ' done' : ''); lbl.textContent = task.text; lbl.title = 'Double-click to edit';
     lbl.ondblclick = () => startEditName(i, lbl);
     row.appendChild(cb); row.appendChild(lbl);
     if (task.url) {
-      const a = document.createElement('a');
-      a.className = 'task-link' + (task.done ? ' done-link' : '');
-      a.href = task.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      a.innerHTML = 'Open ' + extIcon;
-      row.appendChild(a);
+      const a = document.createElement('a'); a.className = 'task-link' + (task.done?' done-link':'');
+      a.href = task.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.innerHTML = 'Open ' + extIcon; row.appendChild(a);
     }
-    const editBtn = document.createElement('button');
-    editBtn.className = 'edit-btn'; editBtn.title = 'Edit link'; editBtn.innerHTML = '&#9998;';
+    const editBtn = document.createElement('button'); editBtn.className = 'edit-btn'; editBtn.title = 'Edit link'; editBtn.innerHTML = '&#9998;';
     editBtn.onclick = () => showEditLink(i, row, task);
-    const del = document.createElement('button');
-    del.className = 'delete-btn'; del.title = 'Remove'; del.innerHTML = '&times;';
-    del.onclick = () => { state.tasks.splice(i, 1); save(SK, state); render(); };
-    row.appendChild(editBtn); row.appendChild(del);
-    list.appendChild(row);
+    const del = document.createElement('button'); del.className = 'delete-btn'; del.title = 'Remove'; del.innerHTML = '&times;';
+    del.onclick = () => { state.tasks.splice(i,1); persistTasks(); render(); };
+    row.appendChild(editBtn); row.appendChild(del); list.appendChild(row);
   });
-  const total = state.tasks.length, done = state.tasks.filter(t => t.done).length;
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('stat-done').textContent = done + ' / ' + total;
-  document.getElementById('stat-pct').textContent = total ? pct + '% complete' : 'Add tasks below';
+  const total = state.tasks.length, done = state.tasks.filter(t=>t.done).length;
+  const pct = total ? Math.round((done/total)*100) : 0;
   document.getElementById('prog-fill').style.width = pct + '%';
   document.getElementById('prog-label').textContent = pct + '%';
-  document.getElementById('stat-streak').textContent = streak.count;
-  if (total > 0 && done === total) {
-    const today = todayStr();
-    if (streak.lastCompleted !== today) {
-      streak.count++; streak.lastCompleted = today; save(STK, streak);
-      document.getElementById('stat-streak').textContent = streak.count;
-    }
-  }
 }
 
+function persistTasks() {
+  lsave(SK, { date: todayStr(), tasks: state.tasks });
+  scheduleWrite({ tasks: state.tasks });
+}
+
+function startEditName(i, lbl) {
+  const inp = document.createElement('input'); inp.className = 'task-name-input'; inp.value = state.tasks[i].text;
+  lbl.replaceWith(inp); inp.focus(); inp.select();
+  function commit() { const val = inp.value.trim(); if (val) state.tasks[i].text = val; persistTasks(); render(); }
+  inp.onblur = commit;
+  inp.onkeydown = e => { if (e.key==='Enter'){inp.onblur=null;commit();} if(e.key==='Escape'){inp.onblur=null;render();} };
+}
 function showEditLink(i, row, task) {
-  const existing = row.querySelector('.inline-edit');
-  if (existing) { existing.remove(); return; }
+  const existing = row.querySelector('.inline-edit'); if (existing) { existing.remove(); return; }
   const wrap = document.createElement('div'); wrap.className = 'inline-edit';
-  const inp = document.createElement('input');
-  inp.type = 'text'; inp.placeholder = 'https://…'; inp.value = task.url || '';
+  const inp = document.createElement('input'); inp.type='text'; inp.placeholder='https://...'; inp.value=task.url||'';
   const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save';
-  saveBtn.onclick = () => { state.tasks[i].url = inp.value.trim() || null; save(SK, state); render(); };
-  inp.onkeydown = e => { if (e.key === 'Enter') saveBtn.click(); };
+  saveBtn.onclick = () => { state.tasks[i].url = inp.value.trim()||null; persistTasks(); render(); };
+  inp.onkeydown = e => { if(e.key==='Enter') saveBtn.click(); };
   const clearBtn = document.createElement('button'); clearBtn.textContent = 'Clear';
-  clearBtn.onclick = () => { state.tasks[i].url = null; save(SK, state); render(); };
+  clearBtn.onclick = () => { state.tasks[i].url = null; persistTasks(); render(); };
   wrap.appendChild(inp); wrap.appendChild(saveBtn); wrap.appendChild(clearBtn);
   row.insertAdjacentElement('afterend', wrap); inp.focus();
 }
-
 function focusUrl() { document.getElementById('new-url').focus(); }
-
 function addTask() {
   const nameEl = document.getElementById('new-task'), urlEl = document.getElementById('new-url');
   const text = nameEl.value.trim(); if (!text) return;
   let url = urlEl.value.trim() || null;
   if (url && !url.startsWith('http')) url = 'https://' + url;
-  state.tasks.push({ text, done: false, url }); save(SK, state);
-  nameEl.value = ''; urlEl.value = ''; nameEl.focus(); render();
+  state.tasks.push({text, done: false, url}); persistTasks();
+  nameEl.value=''; urlEl.value=''; nameEl.focus(); render();
 }
 
-// ── Calendar settings ─────────────────────────────────────────────────────────
-function getCalSettings() { return load(CAL_KEY) || { calUrl: '', docUrl: '' }; }
+// ── Meeting prep — inline panel (no modal) ────────────────────────
+const GDOC_ID = '13wfl9JW-k6_mi7sweAsyuHdWigxRCMVGqC4pItFwpB0';
 
-function toggleMeetingsSettings() {
-  const panel = document.getElementById('meetings-settings');
-  const isHidden = panel.style.display === 'none';
-  if (isHidden) {
-    const s = getCalSettings();
-    document.getElementById('cal-url-input').value = s.calUrl || '';
-    document.getElementById('doc-url-input').value = s.docUrl || '';
-  }
-  panel.style.display = isHidden ? 'block' : 'none';
+// Prefetch state
+let docTextCache = null;
+let docFetching  = false;
+let docFetchErr  = null;
+
+// Start fetching in the background as soon as the page loads
+async function prefetchDoc() {
+  if (docTextCache || docFetching) return;
+  docFetching = true;
+  try { docTextCache = await fetchGoogleDoc(); }
+  catch(e) { docFetchErr = e.message; }
+  finally { docFetching = false; }
 }
 
-function saveCalSettings() {
-  const calUrl = document.getElementById('cal-url-input').value.trim();
-  const docUrl = document.getElementById('doc-url-input').value.trim();
-  save(CAL_KEY, { calUrl, docUrl });
-  document.getElementById('meetings-settings').style.display = 'none';
-  closeNotes();
-  loadMeetings();
-}
-
-// ── iCal parsing ──────────────────────────────────────────────────────────────
-function parseIcalDate(str) {
-  if (!str) return null;
-  // TZID param format: DTSTART;TZID=Europe/London:20250427T090000
-  const clean = str.replace(/[^0-9T]/g, '');
-  if (clean.length === 8) {
-    // All-day: YYYYMMDD
-    return new Date(clean.slice(0,4), clean.slice(4,6)-1, clean.slice(6,8));
-  }
-  // With time: YYYYMMDDTHHmmss[Z]
-  const y = clean.slice(0,4), mo = clean.slice(4,6)-1, d = clean.slice(6,8);
-  const h = clean.slice(9,11), m = clean.slice(11,13), s = clean.slice(13,15)||'00';
-  if (str.includes('Z')) return new Date(Date.UTC(y,mo,d,h,m,s));
-  // Local (TZID) — treat as local time
-  return new Date(y, mo, d, h, m, s);
-}
-
-function parseIcal(text) {
-  const events = [];
-  const vevents = text.split('BEGIN:VEVENT').slice(1);
-  for (const ve of vevents) {
-    const get = (key) => {
-      // handles folded lines and param variants like DTSTART;TZID=...
-      const re = new RegExp(`^${key}[^:]*:(.+)`, 'm');
-      const m = ve.match(re);
-      return m ? m[1].replace(/\r/g,'').trim() : null;
-    };
-    const summary = (get('SUMMARY') || '').replace(/\\n/g,'\n').replace(/\\,/g,',');
-    const dtstart = get('DTSTART');
-    const dtend   = get('DTEND');
-    if (!dtstart || !summary) continue;
-    events.push({ summary, start: parseIcalDate(dtstart), end: parseIcalDate(dtend) });
-  }
-  return events;
-}
-
-function fmtTime(d) {
-  if (!d) return '';
-  let h = d.getHours(), m = d.getMinutes();
-  const ampm = h >= 12 ? 'pm' : 'am';
-  h = h % 12 || 12;
-  return h + (m ? ':' + String(m).padStart(2,'0') : '') + ampm;
-}
-
-function durationMins(start, end) {
-  if (!start || !end) return 0;
-  return Math.round((end - start) / 60000);
-}
-
-// ── Meetings render ───────────────────────────────────────────────────────────
-let cachedMeetings = [];
-
-async function loadMeetings() {
-  const { calUrl } = getCalSettings();
-  const listEl = document.getElementById('meetings-list');
-  const syncEl = document.getElementById('meetings-sync-label');
-
-  if (!calUrl) {
-    listEl.innerHTML = `<div class="meetings-empty">Add your Google Calendar iCal URL via ⚙ to see today's meetings</div>`;
-    syncEl.textContent = 'Not configured';
-    return;
-  }
-
-  syncEl.textContent = 'Syncing…';
-  listEl.innerHTML = `<div class="meetings-empty" style="padding:8px 0;">Loading meetings…</div>`;
-
-  try {
-    // Use allorigins CORS proxy to fetch the iCal file
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(calUrl);
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+async function fetchGoogleDoc() {
+  if (SCRIPT_URL) {
+    const res = await fetch(SCRIPT_URL + '?action=doc', { redirect: 'follow' });
+    if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
     const json = await res.json();
-    const icalText = json.contents;
-    if (!icalText || !icalText.includes('BEGIN:VCALENDAR')) throw new Error('Not a valid iCal file');
-
-    const allEvents = parseIcal(icalText);
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
-
-    const todayEvents = allEvents
-      .filter(e => e.start && e.start >= today && e.start < tomorrow)
-      .sort((a,b) => a.start - b.start);
-
-    cachedMeetings = todayEvents;
-    renderMeetings(todayEvents);
-
-    const now = new Date();
-    syncEl.textContent = 'Last synced ' + fmtTime(now);
-  } catch (err) {
-    syncEl.textContent = 'Failed to load';
-    listEl.innerHTML = `<div class="meetings-empty" style="color:#b45309;">
-      Could not load calendar. Check your iCal URL in ⚙ settings.<br>
-      <span style="font-size:11px;opacity:0.7;">${err.message}</span>
-    </div>`;
+    if (json.error) throw new Error(json.error);
+    return json.contents;
   }
-}
-
-function renderMeetings(events) {
-  const listEl = document.getElementById('meetings-list');
-  listEl.innerHTML = '';
-  if (!events.length) {
-    listEl.innerHTML = `<div class="meetings-empty">No meetings today 🎉</div>`;
-    return;
-  }
-  const now = new Date();
-  events.forEach((ev, i) => {
-    const isPast = ev.end ? ev.end < now : ev.start < now;
-    const isNow  = ev.start <= now && ev.end && ev.end > now;
-    const isNext = !isPast && !isNow && i === events.findIndex(e => {
-      const ep = e.end ? e.end < now : e.start < now;
-      const en = e.start <= now && e.end && e.end > now;
-      return !ep && !en;
-    });
-
-    const row = document.createElement('div'); row.className = 'meeting-row';
-    row.title = 'Click to load meeting notes';
-
-    const dur = durationMins(ev.start, ev.end);
-    const durStr = dur ? ` · ${dur}m` : '';
-    const timeStr = fmtTime(ev.start) + durStr;
-
-    const timeEl = document.createElement('div'); timeEl.className = 'meeting-time'; timeEl.textContent = timeStr;
-    const infoEl = document.createElement('div'); infoEl.className = 'meeting-info';
-    const titleEl = document.createElement('div');
-    titleEl.className = 'meeting-title' + (isPast ? ' past' : '');
-    titleEl.textContent = ev.summary;
-
-    infoEl.appendChild(titleEl);
-
-    const badge = document.createElement('span');
-    if (isNow) { badge.className = 'meeting-badge badge-now'; badge.textContent = 'Now'; }
-    else if (isPast) { badge.className = 'meeting-badge badge-past'; badge.textContent = 'Done'; }
-    else if (isNext) { badge.className = 'meeting-badge badge-next'; badge.textContent = 'Next'; }
-
-    row.appendChild(timeEl); row.appendChild(infoEl);
-    if (badge.className) row.appendChild(badge);
-
-    row.onclick = () => openNotes(ev.summary);
-    listEl.appendChild(row);
-  });
-}
-
-// ── Notes panel ───────────────────────────────────────────────────────────────
-let notesCache = null; // full parsed doc sections
-let notesFetching = false;
-let notesFetchError = null;
-
-// Start fetching notes in the background as soon as settings are available
-async function prefetchNotes() {
-  const { docUrl } = getCalSettings();
-  if (!docUrl || notesCache || notesFetching) return;
-  notesFetching = true;
-  try {
-    notesCache = await fetchAndParseDoc(docUrl);
-  } catch(e) {
-    notesFetchError = e.message;
-  } finally {
-    notesFetching = false;
-  }
-}
-
-async function fetchAndParseDoc(docUrl) {
-  // Convert any Google Doc URL to the published export URL
-  const idMatch = docUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!idMatch) throw new Error('Could not find document ID in URL');
-  const docId = idMatch[1];
-
-  // Use allorigins to bypass CORS
-  const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
+  // CORS proxy — works from GitHub Pages without any server
+  const exportUrl = 'https://docs.google.com/document/d/' + GDOC_ID + '/export?format=txt';
   const proxyUrl  = 'https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl);
-
   const res = await fetch(proxyUrl);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const json = await res.json();
-  const html = json.contents;
-  if (!html || html.length < 100) throw new Error('Empty response — is the document shared publicly?');
-
-  // Parse sections by heading
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const sections = {};
-  let currentHeading = null;
-  let currentParagraphs = [];
-
-  const els = doc.querySelectorAll('h1, h2, h3, p, ul, ol, li');
-  els.forEach(el => {
-    if (['H1','H2','H3'].includes(el.tagName)) {
-      if (currentHeading !== null) sections[currentHeading.toLowerCase()] = currentParagraphs.join('\n');
-      currentHeading = el.textContent.trim();
-      currentParagraphs = [];
-    } else {
-      if (currentHeading !== null) {
-        const t = el.textContent.trim();
-        if (t) currentParagraphs.push(t);
-      }
-    }
-  });
-  if (currentHeading !== null) sections[currentHeading.toLowerCase()] = currentParagraphs.join('\n');
-  return sections;
+  if (!json.contents || json.contents.length < 50) throw new Error('Empty response — make sure the doc is published to the web (File → Share → Publish to web)');
+  return json.contents;
 }
 
-function openNotes(meetingTitle) {
-  const panel = document.getElementById('notes-panel');
-  const titleEl = document.getElementById('notes-panel-title');
-  const contentEl = document.getElementById('notes-content');
-  const { docUrl } = getCalSettings();
-
-  panel.style.display = 'block';
-  titleEl.textContent = meetingTitle;
-
-  if (!docUrl) {
-    contentEl.innerHTML = `<div class="notes-error">No meeting notes doc configured. Add one via ⚙ settings.</div>`;
-    return;
+function extractRelevantSections(docText, meetingTitle) {
+  const lines = docText.split('\n');
+  const titleWords = meetingTitle.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/ +/).filter(w => w.length > 2);
+  const sections = []; let current = null;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isHeading = /\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(trimmed) && trimmed.length < 120;
+    if (isHeading) { if (current) sections.push(current); current = { heading: trimmed, lines: [] }; }
+    else if (current) { current.lines.push(line); }
   }
+  if (current) sections.push(current);
+  if (!sections.length) return null;
+  const scored = sections.map(s => { const h = s.heading.toLowerCase(); return { ...s, score: titleWords.reduce((a,w) => a+(h.includes(w)?1:0), 0) }; });
+  const matches = scored.filter(s => s.score > 0).sort((a,b) => b.score-a.score).slice(0, 5);
+  if (!matches.length) return null;
+  return matches.map(s => '## ' + s.heading + '\n' + s.lines.join('\n')).join('\n\n');
+}
 
-  if (notesFetching) {
-    contentEl.innerHTML = `<div class="notes-loading"><div class="spinner"></div> Loading notes in background…</div>`;
-    // Poll until done
+// Inline prep panel inside the sidebar
+let activePrepMeeting = null;
+function openPrepPanel(meetingTitle, meetingTime) {
+  let panel = document.getElementById('prep-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'prep-panel';
+    panel.style.cssText = 'margin-top:12px;border-top:0.5px solid var(--color-border-tertiary);padding-top:10px;';
+    document.getElementById('cal-list').after(panel);
+  }
+  activePrepMeeting = meetingTitle;
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <span style="font-size:12px;font-weight:500;color:var(--color-text-secondary);">✦ Prep · ${esc(meetingTitle)}</span>
+      <button onclick="closePrepPanel()" style="background:none;border:none;cursor:pointer;color:var(--color-text-tertiary);font-size:16px;line-height:1;padding:0 2px;">×</button>
+    </div>
+    <div id="prep-body"><div class="modal-loading">Loading notes…</div></div>`;
+
+  if (docFetching) {
+    // Poll until done — UI stays fully usable in meantime
     const poll = setInterval(() => {
-      if (!notesFetching) {
-        clearInterval(poll);
-        showNotesForMeeting(meetingTitle, contentEl);
-      }
+      if (!docFetching) { clearInterval(poll); if (activePrepMeeting === meetingTitle) showPrepContent(meetingTitle); }
     }, 400);
-    return;
-  }
-
-  showNotesForMeeting(meetingTitle, contentEl);
-}
-
-function showNotesForMeeting(title, contentEl) {
-  if (notesFetchError) {
-    contentEl.innerHTML = `<div class="notes-error">
-      Could not load notes: ${notesFetchError}<br>
-      <span style="font-size:11px;">Make sure the Google Doc is published: File → Share → Publish to web → Publish</span>
-    </div>`;
-    return;
-  }
-  if (!notesCache) {
-    // Not fetched yet — fetch now (first click)
-    const { docUrl } = getCalSettings();
-    contentEl.innerHTML = `<div class="notes-loading"><div class="spinner"></div> Fetching notes…</div>`;
-    notesFetching = true;
-    fetchAndParseDoc(docUrl).then(sections => {
-      notesCache = sections;
-      notesFetching = false;
-      showNotesForMeeting(title, contentEl);
-    }).catch(e => {
-      notesFetchError = e.message;
-      notesFetching = false;
-      showNotesForMeeting(title, contentEl);
-    });
-    return;
-  }
-
-  // Find best matching section heading
-  const titleLower = title.toLowerCase();
-  let bestKey = null, bestScore = 0;
-  for (const key of Object.keys(notesCache)) {
-    const words = titleLower.split(/\s+/);
-    const matches = words.filter(w => w.length > 3 && key.includes(w)).length;
-    if (matches > bestScore) { bestScore = matches; bestKey = key; }
-  }
-
-  if (bestKey && notesCache[bestKey]) {
-    const lines = notesCache[bestKey].split('\n').filter(Boolean);
-    contentEl.innerHTML = lines.map(l => `<p>${l}</p>`).join('');
   } else {
-    // Show available headings to help user
-    const headings = Object.keys(notesCache);
-    if (headings.length) {
-      contentEl.innerHTML = `<div style="color:var(--color-text-tertiary);font-size:13px;">
-        No notes found matching "<strong>${title}</strong>".<br><br>
-        Headings found in your doc:<br>
-        ${headings.map(h => `• ${h}`).join('<br>')}
-      </div>`;
-    } else {
-      contentEl.innerHTML = `<div class="notes-error">No headings found in the document. Add one heading per meeting.</div>`;
-    }
+    showPrepContent(meetingTitle);
   }
 }
 
-function closeNotes() {
-  document.getElementById('notes-panel').style.display = 'none';
+function closePrepPanel() {
+  activePrepMeeting = null;
+  const p = document.getElementById('prep-panel'); if (p) p.remove();
 }
 
-// ── Date display ──────────────────────────────────────────────────────────────
-const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+async function showPrepContent(meetingTitle) {
+  const bodyEl = document.getElementById('prep-body');
+  if (!bodyEl) return;
+  if (docFetchErr) {
+    bodyEl.innerHTML = `<div class="modal-error">⚠️ ${esc(docFetchErr)}<br><span style="font-size:11px;color:var(--color-text-tertiary);">Make sure the doc is published: File → Share → Publish to web</span></div>`;
+    return;
+  }
+  if (!docTextCache) {
+    // Wasn't prefetched yet — fetch now
+    bodyEl.innerHTML = '<div class="modal-loading">Fetching notes…</div>';
+    docFetching = true;
+    try { docTextCache = await fetchGoogleDoc(); docFetching = false; }
+    catch(e) { docFetchErr = e.message; docFetching = false; showPrepContent(meetingTitle); return; }
+  }
+  const relevant = extractRelevantSections(docTextCache, meetingTitle);
+  if (!relevant) { bodyEl.innerHTML = '<div class="modal-no-notes">No past notes found for this meeting.</div>'; return; }
+  bodyEl.innerHTML = '<div class="modal-loading">Summarising with AI…</div>';
+  try {
+    const prompt = `You are a personal assistant helping someone prepare for an upcoming meeting called "${meetingTitle}". Below are their notes from previous meetings. Summarise the most useful things to know before the next meeting in 3–5 concise bullet points. Focus on: open action items, things discussed or promised, any context worth remembering. Be direct and specific — no fluff.\n\nPAST MEETING NOTES:\n${relevant.slice(0, 6000)}\n\nRespond ONLY with a JSON array of strings, each being one bullet point. No preamble, no markdown, no code fences.`;
+    const response = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] }) });
+    if (!response.ok) throw new Error('AI request failed (' + response.status + ')');
+    const data = await response.json();
+    const raw = data.content.find(b => b.type==='text')?.text || '[]';
+    let bullets; try { bullets = JSON.parse(raw.trim()); } catch { bullets = raw.split('\n').map(l => l.replace(/^[-•*\d.] */, '').trim()).filter(Boolean); }
+    if (!bullets.length) { bodyEl.innerHTML = '<div class="modal-no-notes">No specific points found.</div>'; return; }
+    const ul = document.createElement('ul'); ul.className = 'modal-bullets';
+    bullets.forEach(b => { const li = document.createElement('li'); li.textContent = b; ul.appendChild(li); });
+    const note = document.createElement('p'); note.style.cssText = 'font-size:11px;color:var(--color-text-tertiary);margin-top:0.75rem;';
+    note.textContent = 'Based on past notes matching "' + meetingTitle + '"';
+    bodyEl.innerHTML = ''; bodyEl.appendChild(ul); bodyEl.appendChild(note);
+  } catch(err) {
+    bodyEl.innerHTML = `<div class="modal-error">⚠️ ${esc(String(err))}</div>`;
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────
+const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const now = new Date();
 document.getElementById('date-label').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
 const nextReset = new Date(); nextReset.setHours(0,0,0,0);
 if (nextReset <= now) nextReset.setDate(nextReset.getDate()+1);
-document.getElementById('reset-note').textContent = 'Checklist resets daily at midnight · next reset in ~' + Math.round((nextReset - now) / 36e5) + 'h';
+document.getElementById('reset-note').textContent = 'Checklist resets daily at midnight · next reset in ~' + Math.round((nextReset-now)/36e5) + 'h';
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-initState();
-render();
-initPriorities();
-loadMeetings();
-// Start fetching notes in background straight away so they're ready when clicked
-prefetchNotes();
-
-// Refresh meetings every 5 minutes automatically
-setInterval(loadMeetings, 5 * 60 * 1000);
+initPriorities(); bootData(); loadCalendar();
+setInterval(loadCalendar, 5 * 60 * 1000);
+// Start fetching meeting notes doc in the background immediately
+prefetchDoc();
 </script>
 </body>
 </html>
