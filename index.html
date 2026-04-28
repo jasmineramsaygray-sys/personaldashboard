@@ -306,11 +306,16 @@ function bootData() {
   // 3. Sync from sheet in the background — doesn't block the UI
   setSyncStatus('syncing', 'Syncing…');
   sheetRead().then(remote => {
-    // Only update if sheet has data that differs from local
-    const remoteTasksJson = JSON.stringify(remote.tasks || []);
+    // Apply daily reset — if last save was a previous day, wipe done status
+    const savedDate = lload(SK)?.date;
+    const isNewDay  = savedDate !== todayStr();
+    const remoteTasks = (remote.tasks || []).map(t => ({
+      ...t, done: isNewDay ? false : t.done
+    }));
+    const remoteTasksJson = JSON.stringify(remoteTasks);
     const localTasksJson  = JSON.stringify(state.tasks);
     if (remoteTasksJson !== localTasksJson) {
-      state.tasks = remote.tasks || [];
+      state.tasks = remoteTasks;
       lsave(SK, { date: todayStr(), tasks: state.tasks });
       render();
     }
@@ -353,22 +358,29 @@ function promptScriptUrl() {
 
 // ── iCal / Calendar ───────────────────────────────────────────────
 const ICAL_URL = 'https://calendar.google.com/calendar/ical/jasmine.ramsaygray%40convelio.com/private-b9b75accac36740438214b0e69dc181d/basic.ics';
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(tid);
+    return res;
+  } catch(e) {
+    clearTimeout(tid);
+    throw e.name === 'AbortError' ? new Error('Request timed out') : e;
+  }
+}
+
 async function fetchIcal() {
   if (SCRIPT_URL) {
-    // Simple GET — works cross-origin without CORS preflight
-    const res = await fetch(SCRIPT_URL + '?action=ical', { redirect: 'follow' });
+    const res = await fetchWithTimeout(SCRIPT_URL + '?action=ical', { redirect: 'follow' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     if (json.error) throw new Error(json.error);
     return json.contents;
   }
-  // Fallback proxy
-  const api = 'https://api.allorigins.win/get?url=' + encodeURIComponent(ICAL_URL);
-  const res = await fetch(api);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
-  if (!json.contents) throw new Error('Empty response from proxy');
-  return json.contents;
+  throw new Error('NO_SCRIPT_URL');
 }
 function parseIcal(text) {
   text = text.replace(/\r\n[ \t]/g, '').replace(/\r/g, '');
@@ -429,7 +441,15 @@ async function loadCalendar() {
   document.getElementById('cal-status').textContent = 'Syncing…';
   document.getElementById('cal-list').innerHTML = '';
   try { renderCalendar(todayEvents(parseIcal(await fetchIcal()))); }
-  catch (err) { document.getElementById('cal-status').textContent = 'Could not load — try refreshing.'; document.getElementById('cal-list').innerHTML = `<div class="cal-empty">⚠️ ${esc(String(err))}</div>`; }
+  catch (err) {
+    if (err.message === 'NO_SCRIPT_URL') {
+      document.getElementById('cal-status').textContent = 'Not connected';
+      document.getElementById('cal-list').innerHTML = `<div class="cal-empty">Paste your Apps Script URL to load meetings — <span style="color:#185FA5;cursor:pointer;text-decoration:underline;" onclick="promptScriptUrl()">click here to connect</span></div>`;
+    } else {
+      document.getElementById('cal-status').textContent = 'Could not load — try refreshing.';
+      document.getElementById('cal-list').innerHTML = `<div class="cal-empty">⚠️ ${esc(String(err))}</div>`;
+    }
+  }
 }
 
 // ── Daily priorities (local only — reset daily) ───────────────────
@@ -544,20 +564,36 @@ async function prefetchDoc() {
 
 async function fetchGoogleDoc() {
   if (SCRIPT_URL) {
-    const res = await fetch(SCRIPT_URL + '?action=doc', { redirect: 'follow' });
+    const res = await fetchWithTimeout(SCRIPT_URL + '?action=doc');
     if (!res.ok) throw new Error('Could not fetch doc (HTTP ' + res.status + ')');
     const json = await res.json();
     if (json.error) throw new Error(json.error);
+    if (!json.contents || json.contents.length < 50) throw new Error('Empty doc — check Apps Script is deployed');
     return json.contents;
   }
-  // CORS proxy — works from GitHub Pages without any server
+  // Try two CORS proxies in sequence — if one is down, the other takes over
   const exportUrl = 'https://docs.google.com/document/d/' + GDOC_ID + '/export?format=txt';
-  const proxyUrl  = 'https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl);
-  const res = await fetch(proxyUrl);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const json = await res.json();
-  if (!json.contents || json.contents.length < 50) throw new Error('Empty response — make sure the doc is published to the web (File → Share → Publish to web)');
-  return json.contents;
+  const proxies = [
+    async () => {
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(exportUrl));
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const t = await r.text();
+      if (!t || t.length < 50) throw new Error('Empty response');
+      return t;
+    },
+    async () => {
+      const r = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(exportUrl));
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      if (!j.contents || j.contents.length < 50) throw new Error('Empty response');
+      return j.contents;
+    }
+  ];
+  let lastErr;
+  for (const proxy of proxies) {
+    try { return await proxy(); } catch(e) { lastErr = e; }
+  }
+  throw new Error('Could not fetch doc. Make sure it is published: File → Share → Publish to web. (' + lastErr.message + ')');
 }
 
 function extractRelevantSections(docText, meetingTitle) {
